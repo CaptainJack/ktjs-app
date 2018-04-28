@@ -39,8 +39,8 @@ abstract class Node : Destroyable {
 		get() = parent?.stage
 	
 	init {
-		position.addChangeHandler(::processPositionChanged)
-		size.addChangeHandler(::processSizeChanged)
+		position.onChange(::processPositionChanged)
+		size.onChange(::processSizeChanged)
 	}
 	
 	override fun destroy() {

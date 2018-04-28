@@ -50,7 +50,7 @@ class ScrollableContainer(
 		view.addChild(mask)
 		
 		body.view.mask = mask
-		body.size.addChangeHandler(::processBodySizeChange)
+		body.size.onChange(::processBodySizeChange)
 		
 		updateMask()
 		

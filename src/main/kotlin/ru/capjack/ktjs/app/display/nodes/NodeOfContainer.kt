@@ -37,7 +37,7 @@ abstract class NodeOfContainer<out V : Container>(
 				.endFill()
 		}
 		
-		size.addChangeHandler(::draw)
+		size.onChange(::draw)
 		draw()
 	}
 	

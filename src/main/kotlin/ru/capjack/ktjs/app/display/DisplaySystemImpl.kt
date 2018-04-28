@@ -1,7 +1,6 @@
 package ru.capjack.ktjs.app.display
 
 import ru.capjack.ktjs.app.display.resolution.ResolutionResolver
-import ru.capjack.ktjs.common.time.TimeSystem
 import ru.capjack.ktjs.common.Confines
 import ru.capjack.ktjs.common.geom.AxialValues
 import ru.capjack.ktjs.common.geom.AxialValuesImpl
@@ -11,6 +10,7 @@ import ru.capjack.ktjs.common.geom.calculateRatio
 import ru.capjack.ktjs.common.geom.isInside
 import ru.capjack.ktjs.common.geom.isInsideAtLeastOne
 import ru.capjack.ktjs.common.geom.isOutside
+import ru.capjack.ktjs.common.time.TimeSystem
 
 class DisplaySystemImpl(
 	time: TimeSystem,
@@ -36,7 +36,7 @@ class DisplaySystemImpl(
 	override val renderer: DisplayRenderer = DisplayRendererImpl(sizeConfines.min, traits.rendererResolution, stage.canvas)
 	
 	init {
-		time.forEachFrame { render() }
+		time.onEachFrame { render() }
 	}
 	
 	override fun setCanvasSize(width: Int, height: Int) {

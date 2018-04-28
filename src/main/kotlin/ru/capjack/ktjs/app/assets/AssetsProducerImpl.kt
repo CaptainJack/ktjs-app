@@ -89,7 +89,7 @@ internal class AssetsProducerImpl(
 			soundMakers.mapValues { it.value.asset }
 		)
 		val progress = CompositeProgressRunner(loaders).run()
-		progress.addCompleteHandler { receiver(collection) }
+		progress.onComplete { receiver(collection) }
 		
 		return progress
 	}

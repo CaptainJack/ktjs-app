@@ -5,9 +5,6 @@ import ru.capjack.ktjs.app.display.nodes.box.Layout
 import ru.capjack.ktjs.app.display.nodes.box.Layouts
 import ru.capjack.ktjs.app.display.nodes.node.SizeExpansion
 import ru.capjack.ktjs.app.display.nodes.node.SizeRules
-import ru.capjack.ktjs.common.Handler
-import ru.capjack.ktjs.common.HandlerDummy
-import ru.capjack.ktjs.common.HandlerOfFunction
 import ru.capjack.ktjs.common.geom.AxialValues
 import ru.capjack.ktjs.common.geom.Axis
 import ru.capjack.ktjs.common.geom.Insets
@@ -45,7 +42,7 @@ open class Box(
 	
 	private var _innerSize: MutableAxialValues<Int> = size
 	
-	private val childSizeChangeHandler: Handler = if (layout.dependentOnChildSizeChange) HandlerOfFunction(::processChildSizeChanged) else HandlerDummy
+	private val childSizeChangeHandler = ::processChildSizeChanged
 	
 	private var layoutApplying: Boolean = false
 	
@@ -194,13 +191,13 @@ open class Box(
 		}
 		
 		if (layout.dependentOnChildSizeChange) {
-			node.size.addChangeHandler(childSizeChangeHandler)
+			node.size.onChange(childSizeChangeHandler)
 		}
 	}
 	
 	private fun processChildRemoved(node: Node) {
 		if (layout.dependentOnChildSizeChange) {
-			node.size.removeChangeHandler(childSizeChangeHandler)
+			node.size.offChange(childSizeChangeHandler)
 		}
 	}
 	

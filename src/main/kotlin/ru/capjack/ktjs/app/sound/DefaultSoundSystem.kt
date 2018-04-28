@@ -28,7 +28,7 @@ class DefaultSoundSystem : SoundSystem {
 	}
 	
 	private fun addFlow(flow: SoundFlow): SoundFlow {
-		flow.addEventReceiver(SoundFlow.Event.Complete::class, ::handleFlowComplete)
+		flow.onEvent(SoundFlow.Event.Complete::class, ::handleFlowComplete)
 		flows.add(flow)
 		return flow
 	}
