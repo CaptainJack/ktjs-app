@@ -73,7 +73,7 @@ internal class AssetsProducerImpl(
 		return maker.asset
 	}
 	
-	override fun load(receiver: (Assets) -> Unit): Progress {
+	override fun load(): Progress {
 		val loaders: MutableList<ProgressRunner> = mutableListOf()
 		
 		loaders.addAll(imageMakers.values)
@@ -84,14 +84,17 @@ internal class AssetsProducerImpl(
 			loaders.add(FontsLoader(fontsBaseUrl, fonts))
 		}
 		
+		return CompositeProgressRunner(loaders).run()
+	}
+	
+	override fun load(receiver: (Assets) -> Unit): Progress {
 		val collection = AssetsImpl(
 			imageMakers.mapValues { it.value.asset },
 			imageAtlasMakers.mapValues { it.value.asset },
 			soundMakers.mapValues { it.value.asset }
 		)
-		val progress = CompositeProgressRunner(loaders).run()
+		val progress = load()
 		progress.onComplete { receiver(collection) }
-		
 		return progress
 	}
 	
