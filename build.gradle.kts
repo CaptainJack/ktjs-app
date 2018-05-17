@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import ru.capjack.degos.publish.DegosPublishExtension
 
 group = "ru.capjack.ktjs"
 
@@ -19,6 +20,10 @@ dependencies {
 	implementation("ru.capjack.ktjs:ktjs-wrapper-webfontloader:0.1.0-SNAPSHOT")
 	implementation("ru.capjack.ktjs:ktjs-wrapper-howler:0.1.0-SNAPSHOT")
 	implementation("ru.capjack.ktjs:ktjs-wrapper-greensock:0.1.0-SNAPSHOT")
+}
+
+degosPublish {
+	publicationSources = DegosPublishExtension.PublicationSource.ALWAYS
 }
 
 tasks.withType<Kotlin2JsCompile> {
