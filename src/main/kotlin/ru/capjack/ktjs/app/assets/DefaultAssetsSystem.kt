@@ -1,5 +1,6 @@
 package ru.capjack.ktjs.app.assets
 
+import ru.capjack.ktjs.app.assets.font.FontFaceRegistry
 import ru.capjack.ktjs.app.display.DisplayRenderer
 import ru.capjack.ktjs.common.rl.Url
 import ru.capjack.ktjs.common.rl.Urls

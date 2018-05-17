@@ -1,6 +1,7 @@
 package ru.capjack.ktjs.app.assets
 
 import ru.capjack.ktjs.app.assets.font.FontFace
+import ru.capjack.ktjs.app.assets.font.FontFaceRegistry
 import ru.capjack.ktjs.app.display.DisplayRenderer
 import ru.capjack.ktjs.common.ifNotNull
 import ru.capjack.ktjs.common.progress.CompositeProgressRunner

@@ -1,5 +1,6 @@
 package ru.capjack.ktjs.app.assets
 
+import org.w3c.dom.HTMLSpanElement
 import ru.capjack.ktjs.app.assets.font.FontFace
 import ru.capjack.ktjs.common.progress.AbstractProgress
 import ru.capjack.ktjs.common.progress.Progress
@@ -9,13 +10,16 @@ import ru.capjack.ktjs.wrapper.webfontloader.WebFont
 import ru.capjack.ktjs.wrapper.webfontloader.custom
 import ru.capjack.ktjs.wrapper.webfontloader.load
 import kotlin.browser.document
+import kotlin.browser.window
 import kotlin.dom.appendElement
 
 internal class FontsLoader(
 	private val baseUrl: Url,
-	private val fonts: MutableList<FontFace>
+	private val fonts: List<FontFace>
 
 ) : AbstractProgress(), ProgressRunner {
+	
+	private var completedCounter = 0
 	
 	override fun calculatePercent() = 0.0
 	
@@ -33,10 +37,57 @@ internal class FontsLoader(
 			custom {
 				families = fonts.map(FontFace::family).toTypedArray()
 			}
-			loading = ::complete
+			loading = {
+				fonts.forEach(::waitFont)
+			}
 		}
 		
 		return this
+	}
+	
+	
+	private fun waitFont(fontFace: FontFace) {
+		val testFont = "Courier New"
+		val element = document.createElement("span") as HTMLSpanElement
+		element.innerText = "1Qa|@.;+z"
+		element.style.apply {
+			position = "absolute"
+			top = "-9999px"
+			left = "-9999px"
+			visibility = "hidden"
+			fontFamily = testFont
+			fontWeight = fontFace.weight.value
+			fontStyle = fontFace.style.value
+			fontSize = "250px"
+		}
+		
+		document.body!!.appendChild(element)
+		
+		val fallbackWidth = element.clientWidth
+		
+		element.style.fontFamily = "${fontFace.family}, $testFont"
+		
+		
+		fun check() {
+			val loadedWidth = element.clientWidth
+			console.log("check", fontFace.family, fallbackWidth, loadedWidth)
+			if (fallbackWidth != loadedWidth) {
+				element.remove()
+				tryComplete()
+			}
+			else {
+				window.setTimeout(::check, 50)
+			}
+		}
+		
+		check()
+	}
+	
+	private fun tryComplete() {
+		++completedCounter
+		if (completedCounter == fonts.size) {
+			complete()
+		}
 	}
 	
 	private fun createCssCode(font: FontFace): String {
