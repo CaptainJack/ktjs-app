@@ -25,7 +25,7 @@ abstract class Node : Destroyable {
 	var positionRule: PositionRule by observable(PositionRules.NOTHING, ::processPositionRuleChanged)
 	var sizeRule: SizeRule by observable(SizeRules.NOTHING, ::processSizeRuleChanged)
 	
-	internal abstract val display: DisplayObject
+	abstract val display: DisplayObject
 	
 	protected val _contentSize = MutableChangeableAxialValuesImpl(0, 0)
 	
