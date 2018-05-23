@@ -2,7 +2,6 @@ package ru.capjack.ktjs.app.display.resolution
 
 class AdaptiveResolutionResolver(
 	private val maxBitmapImageResolution: Int
-
 ) : ResolutionResolver {
 
 	override fun resolveRendererResolution(devicePixelRatio: Double): Double {

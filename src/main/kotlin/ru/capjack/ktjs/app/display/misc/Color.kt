@@ -2,54 +2,33 @@ package ru.capjack.ktjs.app.display.misc
 
 class Color private constructor(val argb: Int) {
 	
-	companion object {
-		val BLACK = Color(0, alpha = 1.0)
-		val GOLD = Color(0xFFFF00, alpha = 1.0)
-		val RED = Color(0xFF0000, alpha = 1.0)
-		val WHITE = Color(0xFFFFFF, alpha = 1.0)
-		
-		private fun mergeRgbAndAlpha(rgb: Int, alpha: Double = 1.0): Int {
-			if (rgb !in 0..0xFFFFFF) {
-				throw IllegalArgumentException("Rgb value must be between 0x000000 and 0xFFFFFF")
-			}
-			if (alpha !in 0..1) {
-				throw IllegalArgumentException("Alpha value must be between 0 and 1")
-			}
-			
-			return rgb or ((alpha * 0xFF).toInt() shl 24)
-		}
-	}
+	constructor(rgb: Int, alphaStrength: Double = 1.0) : this(rgb or ((alphaStrength * 0xFF).toInt() shl 24))
 	
-	constructor(rgb: Int, alpha: Double = 1.0) : this(mergeRgbAndAlpha(rgb, alpha))
+	val alpha: Int get() = segment(3)
+	val red: Int get() = segment(2)
+	val green: Int get() = segment(1)
+	val blue: Int get() = segment(0)
 	
-	val alpha: Int
-		get() = argb ushr 24
+	val alphaStrength: Double get() = strength(3)
+	val redStrength: Double get() = strength(2)
+	val greenStrength: Double get() = strength(1)
+	val blueStrength: Double get() = strength(0)
 	
-	val alphaPercent: Double
-		get() = (argb ushr 24) / 0xFF.toDouble()
+	val rgb: Int get() = argb and 0xFFFFFF
 	
-	val red: Int
-		get() = (argb ushr 16) and 0xFF
-	
-	val green: Int
-		get() = (argb ushr 8) and 0xFF
-	
-	val blue: Int
-		get() = argb and 0xFF
-	
-	val rgb: Int
-		get() = argb and 0xFFFFFF
-	
-	val cssValue: String by lazy {
-		if (this.alpha == 0xFF) {
+	val css: String by lazy {
+		if (alpha == 0xFF) {
 			"#" + (rgb.asDynamic().toString(16) as String).padStart(6, '0')
-		}
-		else {
-			"rgba($red, $green, $blue, ${this.alpha})"
+		} else {
+			"rgba($red, $green, $blue, $alphaStrength)"
 		}
 	}
 	
-	fun changeAlpha(value: Double): Color {
-		return Color(mergeRgbAndAlpha(rgb, value))
+	private fun segment(index: Int): Int {
+		return argb.ushr(index * 8).and(0xFF)
+	}
+	
+	private fun strength(index: Int): Double {
+		return segment(index) / 0xFF.toDouble()
 	}
 }

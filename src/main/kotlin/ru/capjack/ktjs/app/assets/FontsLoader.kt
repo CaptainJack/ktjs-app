@@ -70,7 +70,6 @@ internal class FontsLoader(
 		
 		fun check() {
 			val loadedWidth = element.clientWidth
-			console.log("check", fontFace.family, fallbackWidth, loadedWidth)
 			if (fallbackWidth != loadedWidth) {
 				element.remove()
 				tryComplete()

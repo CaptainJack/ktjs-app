@@ -8,12 +8,11 @@ class TextStyle private constructor(
 	font: FontFace,
 	size: Int,
 	letterSpacing: Double,
-	lineHeight: Int = size,
-	color: Color = Color.BLACK,
-	align: TextAlign = TextAlign.LEFT,
+	lineHeight: Int,
+	color: Color,
+	align: TextAlign,
 	
 	var transform: (String) -> String,
-	
 	val pixi: PixiTextStyle
 ) {
 	constructor(
@@ -21,10 +20,9 @@ class TextStyle private constructor(
 		size: Int,
 		letterSpacing: Double = 0.0,
 		lineHeight: Int = size,
-		color: Color = Color.BLACK,
+		color: Color = Colors.BLACK,
 		align: TextAlign = TextAlign.LEFT,
-		
-		transform: (String) -> String = TRANSFORM_NOTHING
+		transform: (String) -> String = TextStyleTransforms.NOTHING
 	) :
 		this(
 			font, size, letterSpacing, lineHeight, color, align, transform,
@@ -34,19 +32,13 @@ class TextStyle private constructor(
 				this.fontStyle = font.style.value
 				this.fontWeight = font.weight.value
 				this.fontSize = size
-				this.fill = color.cssValue
+				this.fill = color.css
 				this.lineHeight = lineHeight
 				this.letterSpacing = letterSpacing
 				this.align = align.name.toLowerCase()
 			})
 		)
 	
-	
-	companion object {
-		val TRANSFORM_NOTHING = { v: String -> v }
-		val TRANSFORM_TO_UPPER_CASE = { v: String -> v.toUpperCase() }
-		val TRANSFORM_TO_LOWER_CASE = { v: String -> v.toLowerCase() }
-	}
 	
 	var font = font
 		set(value) {
@@ -65,7 +57,7 @@ class TextStyle private constructor(
 	var color = color
 		set(value) {
 			field = value
-			pixi.fill = value.cssValue
+			pixi.fill = value.css
 		}
 	
 	var lineHeight = lineHeight
@@ -86,11 +78,11 @@ class TextStyle private constructor(
 			pixi.align = align.name.toLowerCase()
 		}
 	
-	inline fun copy(changes: TextStyle.() -> Unit): TextStyle {
-		return copy().apply(changes)
-	}
-	
 	fun copy(): TextStyle {
 		return TextStyle(font, size, letterSpacing, lineHeight, color, align, transform, pixi.clone())
+	}
+	
+	inline fun copy(changes: TextStyle.() -> Unit): TextStyle {
+		return copy().apply(changes)
 	}
 }

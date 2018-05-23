@@ -5,35 +5,23 @@ import ru.capjack.ktjs.common.Confines
 import ru.capjack.ktjs.common.geom.AxialValues
 import ru.capjack.ktjs.common.geom.AxialValuesImpl
 import ru.capjack.ktjs.common.geom.Axis
-import ru.capjack.ktjs.common.geom.MutableAxialValuesImpl
 import ru.capjack.ktjs.common.geom.calculateRatio
 import ru.capjack.ktjs.common.geom.isInside
 import ru.capjack.ktjs.common.geom.isInsideAtLeastOne
 import ru.capjack.ktjs.common.geom.isOutside
+import ru.capjack.ktjs.common.geom.mutableAxial
 import ru.capjack.ktjs.common.time.TimeSystem
 
 class DisplaySystemImpl(
 	time: TimeSystem,
 	resolutionResolver: ResolutionResolver,
-	sizeConfines: Confines<AxialValues<Int>>
-
+	stageSizeConfines: Confines<AxialValues<Int>>
 ) : DisplaySystem {
 	
-	override val stage: Stage = Stage()
+	private val _stage = StageImpl(stageSizeConfines)
 	
-	override val traits: DisplaySystemTraits
-		get() = _traits
-	
-	override val traitsPanel: DisplaySystemTraitsPanel by lazy {
-		_traitsPanel = DisplaySystemTraitsPanelImpl(traits)
-		_traitsPanel
-	}
-	
-	private val _traits = DisplaySystemTraitsImpl(resolutionResolver, sizeConfines, stage.size)
-	
-	private var _traitsPanel: DisplaySystemTraitsPanelInternal = DisplaySystemTraitsPanelDummy()
-	
-	override val renderer: DisplayRenderer = DisplayRendererImpl(sizeConfines.min, traits.rendererResolution, stage.canvas)
+	override val stage: Stage get() = _stage
+	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver)
 	
 	init {
 		time.onEachFrame { render() }
@@ -44,18 +32,18 @@ class DisplaySystemImpl(
 	}
 	
 	override fun setCanvasSize(size: AxialValues<Int>) {
-		val innerSize = traits.stageSizeConfines.min
-		val outerSize = traits.stageSizeConfines.max
+		val innerSize = _stage.sizeConfines.min
+		val outerSize = _stage.sizeConfines.max
 		
-		val sizeRatio = size.calculateRatio(Axis.HORIZONTAL)
-		val innerRatio = innerSize.calculateRatio(Axis.HORIZONTAL)
-		val outerRatio = outerSize.calculateRatio(Axis.HORIZONTAL)
+		val sizeRatio = size.calculateRatio(Axis.X)
+		val innerRatio = innerSize.calculateRatio(Axis.X)
+		val outerRatio = outerSize.calculateRatio(Axis.X)
 		
-		val rendererSize = MutableAxialValuesImpl(0)
-		val stageSize = MutableAxialValuesImpl(0)
-		val stagePosition = MutableAxialValuesImpl(0)
+		val rendererSize = mutableAxial(0)
+		val stageSize = mutableAxial(0)
+		val stagePosition = mutableAxial(0)
 		
-		_traits.stageScale = 1.0
+		var stageScale = 1.0
 		
 		if (size.isEquals(innerSize)) {
 			rendererSize.set(innerSize)
@@ -71,7 +59,7 @@ class DisplaySystemImpl(
 		}
 		else {
 			if (size.isOutside(innerSize) && size.isInsideAtLeastOne(outerSize)) {
-				val axis = if (size.horizontal <= outerSize.horizontal) Axis.HORIZONTAL else Axis.VERTICAL
+				val axis = if (size.x <= outerSize.x) Axis.X else Axis.Y
 				rendererSize.set(size)
 				stageSize[axis] = size[axis]
 				stageSize[axis.opposite] = outerSize[axis.opposite]
@@ -82,11 +70,11 @@ class DisplaySystemImpl(
 				val inscribeSize: AxialValues<Int>
 				
 				if (size.isInsideAtLeastOne(innerSize)) {
-					inscribeAxis = if (sizeRatio > innerRatio) Axis.VERTICAL else Axis.HORIZONTAL
+					inscribeAxis = if (sizeRatio > innerRatio) Axis.Y else Axis.X
 					inscribeSize = innerSize
 				}
 				else {
-					inscribeAxis = if (sizeRatio > outerRatio) Axis.VERTICAL else Axis.HORIZONTAL
+					inscribeAxis = if (sizeRatio > outerRatio) Axis.Y else Axis.X
 					inscribeSize = outerSize
 				}
 				
@@ -102,29 +90,21 @@ class DisplaySystemImpl(
 					rendererSize[inscribeAxisOpposite]
 				}
 				
-				_traits.stageScale = size[inscribeAxis] / rendererSize[inscribeAxis].toDouble()
+				stageScale = size[inscribeAxis] / rendererSize[inscribeAxis].toDouble()
 			}
 			
-			stagePosition.horizontal = (rendererSize.horizontal - stageSize.horizontal) / 2
-			stagePosition.vertical = (rendererSize.vertical - stageSize.vertical) / 2
+			stagePosition.set(
+				(rendererSize.x - stageSize.x) / 2,
+				(rendererSize.y - stageSize.y) / 2
+			)
 		}
 		
-		renderer.resize(rendererSize.horizontal, rendererSize.vertical)
-		stage.position.set(stagePosition)
-		stage.size.set(stageSize)
-		
-		stage.canvas.style.width = "${size.horizontal}px"
-		stage.canvas.style.height = "${size.vertical}px"
-		
-		_traitsPanel.updateSizes()
+		renderer.resize(rendererSize, size)
+		_stage.locate(stagePosition, stageSize, stageScale)
 	}
 	
 	private fun render() {
-		_traitsPanel.processBeginRender()
-		
-		renderer.render(stage.view)
-		
-		_traitsPanel.processEndRender()
+		renderer.render(_stage.display)
 	}
 }
 

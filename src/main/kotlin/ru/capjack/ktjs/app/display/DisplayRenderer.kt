@@ -1,10 +1,17 @@
 package ru.capjack.ktjs.app.display
 
+import org.w3c.dom.HTMLCanvasElement
+import ru.capjack.ktjs.common.geom.AxialValues
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 import ru.capjack.ktjs.wrapper.pixi.RenderTexture
 
 interface DisplayRenderer {
-	fun resize(width: Int, height: Int)
+	val canvas: HTMLCanvasElement
+	val pixelRatio: Double
+	val resolution: Double
+	val bitmapImageResolution: Int
+	
+	fun resize(screenSize: AxialValues<Int>, canvasSize: AxialValues<Int>)
 	
 	fun render(display: DisplayObject)
 	

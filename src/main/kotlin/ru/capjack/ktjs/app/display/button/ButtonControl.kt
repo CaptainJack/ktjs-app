@@ -12,9 +12,9 @@ interface ButtonControl : Able, Destroyable {
 
     fun press()
 
-    fun addPressHandler(handler: () -> Unit): Cancelable
+    fun onPress(handler: () -> Unit): Cancelable
 
-    fun addStateChangeHandler(handler: (new: ButtonState, old: ButtonState) -> Unit): Cancelable
+    fun onState(handler: (new: ButtonState, old: ButtonState) -> Unit): Cancelable
 
     fun setSound(sound: Sound, volume: Double = 1.0)
 }

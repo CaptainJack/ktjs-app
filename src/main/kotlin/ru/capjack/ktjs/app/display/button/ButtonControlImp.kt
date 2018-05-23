@@ -60,11 +60,11 @@ class ButtonControlImp(
         }
     }
 
-    override fun addPressHandler(handler: () -> Unit): Cancelable {
+    override fun onPress(handler: () -> Unit): Cancelable {
         return pressHandlers.add(handler)
     }
 
-    override fun addStateChangeHandler(handler: (new: ButtonState, old: ButtonState) -> Unit): Cancelable {
+    override fun onState(handler: (new: ButtonState, old: ButtonState) -> Unit): Cancelable {
         return stateHandlers.add(handler)
     }
 
