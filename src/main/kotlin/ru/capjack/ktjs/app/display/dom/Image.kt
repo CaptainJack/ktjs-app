@@ -3,7 +3,11 @@ package ru.capjack.ktjs.app.display.dom
 import ru.capjack.ktjs.wrapper.pixi.Sprite
 import ru.capjack.ktjs.wrapper.pixi.Texture
 
-class Image(texture: Texture) : Tail() {
+class Image(
+	texture: Texture = Texture.EMPTY,
+	deformable: Boolean = false
+
+) : Tail(deformable) {
 	
 	override val display = Sprite(texture)
 	
@@ -11,17 +15,17 @@ class Image(texture: Texture) : Tail() {
 		get() = display.texture
 		set(value) {
 			display.texture = value
-			processTextureChange()
+			processChangeTexture()
 		}
 	
 	init {
-		processTextureChange()
+		processChangeTexture()
 	}
 	
-	private fun processTextureChange() {
-		specifyContentSizeByDisplay()
+	private fun processChangeTexture() {
+		assignContentSizeByDisplay()
 		if (texture.baseTexture.hasLoaded) {
-			texture.once("update", ::specifyContentSizeByDisplay)
+			texture.once("update", ::assignContentSizeByDisplay)
 		}
 	}
 }

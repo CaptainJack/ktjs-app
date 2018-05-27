@@ -28,8 +28,6 @@ class HowlerSoundFlow(
 	private var endTask: Cancelable? = null
 	
 	init {
-		source.on(Events.SEEK, { console.log("on seek", source.seek(id)) }, id)
-		
 		waitEnd()
 		
 		if (settings.start != 0.0) {

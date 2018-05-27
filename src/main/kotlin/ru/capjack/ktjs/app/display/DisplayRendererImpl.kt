@@ -25,16 +25,15 @@ class DisplayRendererImpl(size: AxialValues<Int>, resolutionResolver: Resolution
 		width = size.x
 		height = size.y
 		resolution = this@DisplayRendererImpl.resolution
-		backgroundColor = 0x666666
+		backgroundColor = 0x999999
 		antialias = true
 		view = canvas
 	})
 	
-	
-	override fun resize(screenSize: AxialValues<Int>, canvasSize: AxialValues<Int>) {
-		pixiRenderer.resize(screenSize.x, screenSize.y)
-		canvas.style.width = "${canvasSize.x}px"
-		canvas.style.height = "${canvasSize.y}px"
+	override fun resize(size: AxialValues<Int>) {
+		pixiRenderer.resize(size.x, size.y)
+		canvas.style.width = "${size.x}px"
+		canvas.style.height = "${size.y}px"
 	}
 	
 	override fun render(display: DisplayObject) {

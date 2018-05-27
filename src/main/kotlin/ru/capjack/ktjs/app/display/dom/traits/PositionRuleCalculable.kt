@@ -7,6 +7,8 @@ import ru.capjack.ktjs.common.geom.MutableAxialValues
 abstract class PositionRuleCalculable : PositionRule {
 	override fun isApplicable(type: SpaceType) = true
 	
+	override fun isApplicable(type: SpaceType, axis: Axis) = true
+	
 	override fun apply(target: MutableAxialValues<Int>, space: AxialValues<Int>, region: AxialValues<Int>) {
 		target.set(calculate(space, region, Axis.X), calculate(space, region, Axis.Y))
 	}

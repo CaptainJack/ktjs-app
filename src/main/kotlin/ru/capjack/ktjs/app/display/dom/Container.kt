@@ -3,7 +3,7 @@ package ru.capjack.ktjs.app.display.dom
 import ru.capjack.ktjs.wrapper.pixi.Container
 
 abstract class Container : NodeOfContainer(), NodeList {
-	override val display = Container()
+	final override val display = Container()
 	
 	override val nodes: List<Node>
 		get() = _nodes
@@ -20,7 +20,7 @@ abstract class Container : NodeOfContainer(), NodeList {
 	
 	override fun addNode(node: Node): Boolean {
 		if (doAddNode(node)) {
-			processNodesChanged()
+			processChangeNodes()
 			return true
 		}
 		return false
@@ -32,7 +32,7 @@ abstract class Container : NodeOfContainer(), NodeList {
 			changed = doAddNode(node) || changed
 		}
 		if (changed) {
-			processNodesChanged()
+			processChangeNodes()
 		}
 		return changed
 	}
@@ -43,7 +43,7 @@ abstract class Container : NodeOfContainer(), NodeList {
 	
 	override fun removeNode(node: Node): Boolean {
 		if (doRemoveNode(node)) {
-			processNodesChanged()
+			processChangeNodes()
 			return true
 		}
 		return false
@@ -55,7 +55,7 @@ abstract class Container : NodeOfContainer(), NodeList {
 			changed = doRemoveNode(node) || changed
 		}
 		if (changed) {
-			processNodesChanged()
+			processChangeNodes()
 		}
 		return changed
 	}
@@ -77,7 +77,7 @@ abstract class Container : NodeOfContainer(), NodeList {
 			node.container = null
 		}
 		
-		processNodesChanged()
+		processChangeNodes()
 		return true
 	}
 	
@@ -102,6 +102,6 @@ abstract class Container : NodeOfContainer(), NodeList {
 		return false
 	}
 	
-	protected open fun processNodesChanged() {
+	protected open fun processChangeNodes() {
 	}
 }

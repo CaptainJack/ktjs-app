@@ -15,15 +15,32 @@ import ru.capjack.ktjs.common.geom.ChangeableAxialValues
 import ru.capjack.ktjs.common.geom.MutableChangeableAxialValuesImpl
 import ru.capjack.ktjs.common.observable
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
+import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
 import ru.capjack.ktjs.wrapper.pixi.set
 
 abstract class Node : Destroyable {
-	val position: Dimension get() = _position.unsafeCast<Dimension>()
-	val size: Dimension get() = _size
-	val contentSize: ChangeableAxialValues<Int> get() = _contentSize
+	val position: Dimension
+		get() = _position.unsafeCast<Dimension>()
 	
-	var positionRule: PositionRule by observable(PositionRules.NOTHING, ::processPositionRuleChanged)
-	var sizeRule: SizeRule by observable(SizeRules.NOTHING, ::processSizeRuleChanged)
+	val size: Dimension
+		get() = _size
+	
+	val contentSize: ChangeableAxialValues<Int>
+		get() = _contentSize
+	
+	var positionRule: PositionRule
+		by observable(PositionRules.NOTHING, ::processChangePositionRule)
+	
+	var sizeRule: SizeRule
+		by observable(SizeRules.NOTHING, ::processChangeSizeRule)
+	
+	var visible: Boolean
+		get() = display.visible
+		set(value) {
+			display.visible = value
+		}
+	
+	var alpha: Double by observable(1.0, ::processChangeAlpha)
 	
 	abstract val display: DisplayObject
 	
@@ -37,6 +54,8 @@ abstract class Node : Destroyable {
 	private var sizeRuleBindingInside: Cancelable = CancelableDummy
 	private var sizeRuleBindingOutside: Cancelable = CancelableDummy
 	
+	private var alphaFilter: AlphaFilter? = null
+	
 	internal var container: Container? = null
 		set(value) {
 			if (field != value) {
@@ -45,7 +64,7 @@ abstract class Node : Destroyable {
 					it.removeNode(this)
 				}
 				field = value
-				processContainerChanged()
+				processChangeContainer()
 			}
 		}
 	
@@ -63,17 +82,17 @@ abstract class Node : Destroyable {
 		display.destroy()
 	}
 	
-	private fun processContainerChanged() {
-		processPositionRuleChanged()
-		processSizeRuleChanged()
+	protected open fun processChangeContainer() {
+		processChangePositionRule()
+		processChangeSizeRule()
 	}
 	
-	protected open fun processPositionRuleChanged() {
+	protected open fun processChangePositionRule() {
 		bindPositionRuleInside()
 		bindPositionRuleOutsize()
 	}
 	
-	protected open fun processSizeRuleChanged() {
+	protected open fun processChangeSizeRule() {
 		bindSizeRuleInside()
 		bindSizeRuleOutsize()
 	}
@@ -136,6 +155,20 @@ abstract class Node : Destroyable {
 	private fun applySizeRuleOutside() {
 		container?.also {
 			sizeRule.apply(size, it.size, SpaceType.OUTSIDE)
+		}
+	}
+	
+	private fun processChangeAlpha(value: Double) {
+		if (value == 1.0) {
+			alphaFilter = null
+			display.filters = emptyArray()
+		} else {
+			if (alphaFilter == null) {
+				alphaFilter = AlphaFilter(value)
+				display.filters = arrayOf(alphaFilter!!)
+			} else {
+				alphaFilter!!.alpha = value
+			}
 		}
 	}
 }

@@ -39,67 +39,46 @@ class DisplaySystemImpl(
 		val innerRatio = innerSize.calculateRatio(Axis.X)
 		val outerRatio = outerSize.calculateRatio(Axis.X)
 		
-		val rendererSize = mutableAxial(0)
 		val stageSize = mutableAxial(0)
 		val stagePosition = mutableAxial(0)
 		
 		var stageScale = 1.0
 		
-		if (size.isEquals(innerSize)) {
-			rendererSize.set(innerSize)
-			stageSize.set(innerSize)
-		}
-		else if (size.isEquals(outerSize)) {
-			rendererSize.set(outerSize)
-			stageSize.set(outerSize)
-		}
-		else if (size.isOutside(innerSize) && size.isInside(outerSize)) {
-			rendererSize.set(size)
+		if (size.x <= outerSize.x && size.y <= outerSize.y && size.x >= innerSize.x && size.y >= innerSize.y) {
 			stageSize.set(size)
-		}
-		else {
+		} else {
+			
 			if (size.isOutside(innerSize) && size.isInsideAtLeastOne(outerSize)) {
 				val axis = if (size.x <= outerSize.x) Axis.X else Axis.Y
-				rendererSize.set(size)
 				stageSize[axis] = size[axis]
 				stageSize[axis.opposite] = outerSize[axis.opposite]
-			}
-			else {
-				
+			} else {
 				val inscribeAxis: Axis
-				val inscribeSize: AxialValues<Int>
 				
-				if (size.isInsideAtLeastOne(innerSize)) {
+				val inside = size.isInside(innerSize) || size.isInsideAtLeastOne(innerSize)
+				if (inside) {
 					inscribeAxis = if (sizeRatio > innerRatio) Axis.Y else Axis.X
-					inscribeSize = innerSize
-				}
-				else {
+					stageSize[inscribeAxis] = innerSize[inscribeAxis]
+				} else {
 					inscribeAxis = if (sizeRatio > outerRatio) Axis.Y else Axis.X
-					inscribeSize = outerSize
+					stageSize.set(outerSize)
 				}
 				
-				val inscribeAxisOpposite = inscribeAxis.opposite
-				rendererSize[inscribeAxis] = inscribeSize[inscribeAxis]
-				rendererSize[inscribeAxisOpposite] = (inscribeSize[inscribeAxis] * size.calculateRatio(inscribeAxisOpposite)).toInt()
+				stageScale = size[inscribeAxis].toDouble() / stageSize[inscribeAxis]
 				
-				stageSize[inscribeAxis] = inscribeSize[inscribeAxis]
-				stageSize[inscribeAxisOpposite] = if (rendererSize[inscribeAxisOpposite] > outerSize[inscribeAxisOpposite]) {
-					outerSize[inscribeAxisOpposite]
+				if (inside) {
+					val opposite = inscribeAxis.opposite
+					stageSize[opposite] = (size[opposite] / stageScale).toInt().coerceIn(innerSize[opposite], outerSize[opposite])
 				}
-				else {
-					rendererSize[inscribeAxisOpposite]
-				}
-				
-				stageScale = size[inscribeAxis] / rendererSize[inscribeAxis].toDouble()
 			}
 			
 			stagePosition.set(
-				(rendererSize.x - stageSize.x) / 2,
-				(rendererSize.y - stageSize.y) / 2
+				(size.x - (stageSize.x * stageScale).toInt()) / 2,
+				(size.y - (stageSize.y * stageScale).toInt()) / 2
 			)
 		}
 		
-		renderer.resize(rendererSize, size)
+		renderer.resize(size)
 		_stage.locate(stagePosition, stageSize, stageScale)
 	}
 	

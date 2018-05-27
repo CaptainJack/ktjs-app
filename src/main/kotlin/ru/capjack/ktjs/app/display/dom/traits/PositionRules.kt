@@ -7,21 +7,15 @@ object PositionRules {
 	val START: PositionRule = NOTHING
 	val END: PositionRule = PositionRuleEnd()
 	
-	val LEFT: PositionRule = START
-	val RIGHT: PositionRule = END
+	val CENTER_TOP: PositionRule = PositionRuleAxial(CENTER, START)
+	val CENTER_BOTTOM: PositionRule = PositionRuleAxial(CENTER, END)
 	
-	val TOP: PositionRule = START
-	val BOTTOM: PositionRule = END
-	
-	val CENTER_TOP: PositionRule = PositionRuleAxial(CENTER, TOP)
-	val CENTER_BOTTOM: PositionRule = PositionRuleAxial(CENTER, BOTTOM)
-	
-	val LEFT_CENTER: PositionRule = PositionRuleAxial(LEFT, CENTER)
+	val LEFT_CENTER: PositionRule = PositionRuleAxial(START, CENTER)
 	val LEFT_TOP: PositionRule = START
-	val LEFT_BOTTOM: PositionRule = PositionRuleAxial(LEFT, BOTTOM)
+	val LEFT_BOTTOM: PositionRule = PositionRuleAxial(START, END)
 	
-	val RIGHT_CENTER: PositionRule = PositionRuleAxial(RIGHT, CENTER)
-	val RIGHT_TOP: PositionRule = PositionRuleAxial(RIGHT, TOP)
+	val RIGHT_CENTER: PositionRule = PositionRuleAxial(END, CENTER)
+	val RIGHT_TOP: PositionRule = PositionRuleAxial(END, START)
 	val RIGHT_BOTTOM: PositionRule = END
 	
 	fun factory(x: PositionRule, y: PositionRule): PositionRule {
@@ -29,24 +23,24 @@ object PositionRules {
 			CENTER -> {
 				when (y) {
 					CENTER -> CENTER
-					TOP    -> CENTER_TOP
-					BOTTOM -> CENTER_BOTTOM
+					START  -> CENTER_TOP
+					END    -> CENTER_BOTTOM
 					else   -> PositionRuleAxial(x, y)
 				}
 			}
-			LEFT   -> {
+			START  -> {
 				when (y) {
 					CENTER -> LEFT_CENTER
-					TOP    -> LEFT_TOP
-					BOTTOM -> LEFT_BOTTOM
+					START  -> LEFT_TOP
+					END    -> LEFT_BOTTOM
 					else   -> PositionRuleAxial(x, y)
 				}
 			}
-			RIGHT  -> {
+			END    -> {
 				when (y) {
 					CENTER -> RIGHT_CENTER
-					TOP    -> RIGHT_TOP
-					BOTTOM -> RIGHT_BOTTOM
+					START  -> RIGHT_TOP
+					END    -> RIGHT_BOTTOM
 					else   -> PositionRuleAxial(x, y)
 				}
 			}

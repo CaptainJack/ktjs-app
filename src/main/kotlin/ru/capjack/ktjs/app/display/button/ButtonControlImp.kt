@@ -20,7 +20,7 @@ class ButtonControlImp(
 
     override var data: Any? = null
     override var state = ButtonState.DISABLED
-    override var enabled by observable(false, ::processEnabledChanged)
+    override var enabled by observable(false, ::processChangeEnabled)
 
     private val refOnPointerOver = ::onPointerOver
     private val refOnPointerOut = ::onPointerOut
@@ -74,7 +74,7 @@ class ButtonControlImp(
         this.sound = sound
     }
 
-    private fun processEnabledChanged() {
+    private fun processChangeEnabled() {
         target.interactive = enabled
 
         if (enabled) {

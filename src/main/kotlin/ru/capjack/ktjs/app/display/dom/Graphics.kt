@@ -2,7 +2,9 @@ package ru.capjack.ktjs.app.display.dom
 
 import ru.capjack.ktjs.wrapper.pixi.Graphics as PixiGraphics
 
-open class Graphics : Tail() {
+open class Graphics(
+	deformable: Boolean = false
+) : Tail(deformable) {
 	
 	override val display = PixiGraphics()
 	
@@ -34,7 +36,7 @@ open class Graphics : Tail() {
 	fun endDraw(): Graphics {
 		if (--drawCallsCounter <= 0) {
 			drawCallsCounter = 0
-			specifyContentSizeByDisplay()
+			assignContentSizeByDisplay()
 		}
 		return this
 	}
@@ -85,7 +87,7 @@ open class Graphics : Tail() {
 	
 	private fun tryUpdateSize(): Graphics {
 		if (drawCallsCounter == 0) {
-			specifyContentSizeByDisplay()
+			assignContentSizeByDisplay()
 		}
 		return this
 	}

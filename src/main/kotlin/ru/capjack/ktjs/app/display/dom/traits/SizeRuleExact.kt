@@ -12,7 +12,7 @@ abstract class SizeRuleExact : SizeRule {
 	}
 	
 	override fun apply(target: MutableAxialValues<Int>, space: AxialValues<Int>, type: SpaceType, axis: Axis) {
-		if (isApplicable(type)) {
+		if (isApplicable(type, axis)) {
 			target[axis] = space[axis]
 		}
 	}

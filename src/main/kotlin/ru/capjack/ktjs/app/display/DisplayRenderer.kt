@@ -11,7 +11,7 @@ interface DisplayRenderer {
 	val resolution: Double
 	val bitmapImageResolution: Int
 	
-	fun resize(screenSize: AxialValues<Int>, canvasSize: AxialValues<Int>)
+	fun resize(size: AxialValues<Int>)
 	
 	fun render(display: DisplayObject)
 	

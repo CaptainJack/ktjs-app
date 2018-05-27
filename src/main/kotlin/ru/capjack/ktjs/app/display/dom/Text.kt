@@ -4,8 +4,11 @@ import ru.capjack.ktjs.app.display.misc.TextStyle
 import ru.capjack.ktjs.wrapper.pixi.Text as PixiText
 
 class Text(
-	style: TextStyle, value: String = ""
-) : Tail() {
+	style: TextStyle,
+	value: String = ""
+
+) : Tail(false) {
+	
 	override val display = PixiText(
 		style.transform(value),
 		style.pixi
@@ -16,7 +19,7 @@ class Text(
 			if (field != value) {
 				field = value
 				display.style = value.pixi
-				processValueChanged()
+				processChangedValue()
 			}
 		}
 	
@@ -26,16 +29,16 @@ class Text(
 			val v = style.transform(value)
 			if (v != display.text) {
 				display.text = v
-				processValueChanged()
+				processChangedValue()
 			}
 		}
 	
 	init {
-		processValueChanged()
+		processChangedValue()
 		//TODO Почему то иногда view.width содержит неверное значение
 	}
 	
-	private fun processValueChanged() {
-		specifyContentSizeByDisplay()
+	private fun processChangedValue() {
+		assignContentSizeByDisplay()
 	}
 }
