@@ -8,7 +8,6 @@ import ru.capjack.ktjs.common.progress.CompositeProgressRunner
 import ru.capjack.ktjs.common.progress.Progress
 import ru.capjack.ktjs.common.progress.ProgressRunner
 import ru.capjack.ktjs.common.rl.FilePath
-import ru.capjack.ktjs.common.rl.FilePaths
 import ru.capjack.ktjs.common.rl.Url
 import ru.capjack.ktjs.common.rl.Urls
 
@@ -18,12 +17,24 @@ internal class AssetsProducerImpl(
 	private val baseUrl: Url = Urls.EMPTY,
 	private val fontsBaseUrl: Url = Urls.EMPTY,
 	private val fontsRegistry: FontFaceRegistry
-) : AbstractAssetsCollector(), AssetsProducer {
+) : AssetsCollector, AssetsProducer {
 	
 	private var imageMakers: MutableMap<String, ImageAssetMaker> = mutableMapOf()
 	private var imageAtlasMakers: MutableMap<String, ImageAtlasAssetMaker> = mutableMapOf()
 	private var fonts: MutableList<FontFace> = mutableListOf()
 	private var soundMakers: MutableMap<String, SoundAssetMaker> = mutableMapOf()
+	
+	override fun addFont(face: FontFace): FontAsset {
+		fontsRegistry[face].ifNotNull {
+			return it
+		}
+		
+		val asset = FontAssetImpl(face)
+		fonts.add(face)
+		fontsRegistry[face] = asset
+		
+		return FontAssetImpl(face)
+	}
 	
 	override fun addImage(name: String, path: FilePath): ImageAsset {
 		if (imageMakers.containsKey(name)) {
@@ -47,18 +58,6 @@ internal class AssetsProducerImpl(
 		imageAtlasMakers[name] = maker
 		
 		return maker.asset
-	}
-	
-	override fun addFont(face: FontFace): FontAsset {
-		fontsRegistry[face].ifNotNull {
-			return it
-		}
-		
-		val asset = FontAssetImpl(face)
-		fonts.add(face)
-		fontsRegistry[face] = asset
-		
-		return FontAssetImpl(face)
 	}
 	
 	override fun addSound(name: String, path: FilePath): SoundAsset {
@@ -109,10 +108,6 @@ internal class AssetsProducerImpl(
 		}
 		
 		return fontsBaseUrl.resolvePath(file)
-	}
-	
-	override fun inDirectory(dir: String): AssetsCollector {
-		return DirectoryAssetsCollector(this, FilePaths.get(dir))
 	}
 }
 
