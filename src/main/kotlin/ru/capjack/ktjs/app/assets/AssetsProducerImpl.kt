@@ -30,7 +30,7 @@ internal class AssetsProducerImpl(
 			throw IllegalStateException("Asset \"$name\" is already added")
 		}
 		
-		val maker = ImageAssetMaker(baseUrl.resolvePath(settings.resolveImagePath(path)), renderer, settings)
+		val maker = ImageAssetMaker(baseUrl.resolvePath(settings.convertImagePath(path)), renderer, settings)
 		
 		imageMakers[name] = maker
 		
