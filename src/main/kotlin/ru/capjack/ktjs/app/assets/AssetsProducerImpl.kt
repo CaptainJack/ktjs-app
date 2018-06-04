@@ -41,7 +41,7 @@ internal class AssetsProducerImpl(
 			throw IllegalStateException("Asset \"$name\" is already added")
 		}
 		
-		val maker = ImageAssetMaker(baseUrl.resolvePath(settings.convertImagePath(path)), renderer, settings)
+		val maker = ImageAssetMaker(baseUrl.resolvePath(convertImagePath(path)), renderer, settings)
 		
 		imageMakers[name] = maker
 		
@@ -97,17 +97,14 @@ internal class AssetsProducerImpl(
 		return progress
 	}
 	
-	private fun resolveFontPath(font: FontFace): Url {
-		var file = font.family.replace(' ', '_')
-		
-		if (font.weight != FontFace.Weight.NORMAL) {
-			file += "-${font.weight.value.capitalize()}"
+	private fun convertImagePath(path: FilePath): FilePath {
+		return when {
+			!path.isFileExtension("svg")
+				&& settings.bitmapResolutionResolveSuffix
+				&& settings.imageResolution != 1
+			-> path.resolveSibling("${path.name.base}@${settings.imageResolution}x${path.name.extensionAsSuffix}")
+			else -> path
 		}
-		if (font.style != FontFace.Style.NORMAL) {
-			file += "-${font.style.value.capitalize()}"
-		}
-		
-		return fontsBaseUrl.resolvePath(file)
 	}
 }
 

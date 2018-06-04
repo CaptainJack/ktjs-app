@@ -42,7 +42,7 @@ class ImageLoader(
 				createJpgaTexture()
 			}
 			else {
-				BaseTexture(image, resolution = settings.bitmapImageResolution)
+				BaseTexture(image, resolution = settings.imageResolution)
 			}
 		
 		receiver.invoke(texture)
@@ -53,8 +53,8 @@ class ImageLoader(
 		val width = image.naturalWidth as Int
 		val height = image.naturalHeight as Int
 		
-		canvas.width = width * settings.bitmapImageResolution
-		canvas.height = height * settings.bitmapImageResolution
+		canvas.width = width * settings.imageResolution
+		canvas.height = height * settings.imageResolution
 		
 		(canvas.getContext("2d") as CanvasRenderingContext2D).drawImage(
 			image,
@@ -62,19 +62,19 @@ class ImageLoader(
 			0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble()
 		)
 		
-		return BaseTexture(canvas, resolution = settings.bitmapImageResolution)
+		return BaseTexture(canvas, resolution = settings.imageResolution)
 	}
 	
 	private fun createJpgaTexture(): BaseTexture {
 		val h = url.path.name.base.endsWith(".ah")
 		
-		val width = image.naturalWidth as Double / settings.bitmapImageResolution
-		val height = image.naturalHeight as Double / settings.bitmapImageResolution
+		val width = image.naturalWidth as Double / settings.imageResolution
+		val height = image.naturalHeight as Double / settings.imageResolution
 		val frameWidth = if (h) width / 2 else width
 		val frameHeight = if (h) height else height / 2
 		
-		val sourceTextureBase = BaseTexture(image, resolution = settings.bitmapImageResolution)
-		val renderedTextureBase = BaseRenderTexture(frameWidth, frameHeight, resolution = settings.bitmapImageResolution)
+		val sourceTextureBase = BaseTexture(image, resolution = settings.imageResolution)
+		val renderedTextureBase = BaseRenderTexture(frameWidth, frameHeight, resolution = settings.imageResolution)
 		val renderedTexture = RenderTexture(renderedTextureBase)
 		
 		val container = Container()
