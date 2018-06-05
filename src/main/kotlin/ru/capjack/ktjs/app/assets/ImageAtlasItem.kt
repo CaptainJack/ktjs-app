@@ -2,6 +2,8 @@ package ru.capjack.ktjs.app.assets
 
 import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.geom.Rectangle
+import ru.capjack.ktjs.common.geom.isEquals
+import ru.capjack.ktjs.common.geom.rotate
 
 data class ImageAtlasItem(
 	val name: String,

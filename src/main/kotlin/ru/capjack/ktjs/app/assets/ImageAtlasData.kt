@@ -6,6 +6,7 @@ import org.w3c.dom.get
 import ru.capjack.ktjs.common.geom.AxialInstances
 import ru.capjack.ktjs.common.geom.axial
 import ru.capjack.ktjs.common.geom.rect
+import ru.capjack.ktjs.common.geom.rotate
 
 internal class ImageAtlasData(
 	val imagePath: String,
