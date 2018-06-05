@@ -1,11 +1,11 @@
 package ru.capjack.ktjs.app.display.dom.traits
 
-import ru.capjack.ktjs.common.geom.AxialValues
+import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.geom.Axis
-import ru.capjack.ktjs.common.geom.MutableAxialValues
+import ru.capjack.ktjs.common.geom.MutableAxial
 
 class SizeRuleNothing : SizeRule, DimensionRuleNothing() {
-	override fun apply(target: MutableAxialValues<Int>, space: AxialValues<Int>, type: SpaceType) {}
+	override fun apply(target: MutableAxial<Int>, space: Axial<Int>, type: SpaceType) {}
 	
-	override fun apply(target: MutableAxialValues<Int>, space: AxialValues<Int>, type: SpaceType, axis: Axis) {}
+	override fun apply(target: MutableAxial<Int>, space: Axial<Int>, type: SpaceType, axis: Axis) {}
 }

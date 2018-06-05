@@ -3,7 +3,7 @@ package ru.capjack.ktjs.app.assets
 import org.w3c.dom.XMLDocument
 import org.w3c.dom.asList
 import org.w3c.dom.get
-import ru.capjack.ktjs.common.geom.AxialValuesInstances
+import ru.capjack.ktjs.common.geom.AxialInstances
 import ru.capjack.ktjs.common.geom.axial
 import ru.capjack.ktjs.common.geom.rect
 
@@ -43,7 +43,7 @@ internal class ImageAtlasData(
 					)
 					val rotated = sprite.getAttribute("r").equals("y")
 					val size = if (rotated) frame.size.rotate() else frame.size
-					items.add(ImageAtlasItem(name, frame, size, AxialValuesInstances.INT_0, rotated))
+					items.add(ImageAtlasItem(name, frame, size, AxialInstances.INT_0, rotated))
 				}
 			}
 			else {
@@ -60,7 +60,7 @@ internal class ImageAtlasData(
 					val rotated = sprite.getAttribute("r").equals("y")
 					
 					items.add(
-						ImageAtlasItem(name, frame, frame.size, AxialValuesInstances.INT_0, rotated)
+						ImageAtlasItem(name, frame, frame.size, AxialInstances.INT_0, rotated)
 					)
 				}
 			}
@@ -77,7 +77,7 @@ internal class ImageAtlasData(
 				val rotated = l == 6 || l == 10
 				val trim = when {
 					l >= 9 -> axial(d[5] as Int, d[6] as Int)
-					else   -> AxialValuesInstances.INT_0
+					else   -> AxialInstances.INT_0
 				}
 				val size = when {
 					l >= 9  -> axial(d[7] as Int, d[8] as Int)

@@ -1,5 +1,5 @@
 package ru.capjack.ktjs.app.display.dom.traits
 
-import ru.capjack.ktjs.common.geom.MutableChangeableAxialValues
+import ru.capjack.ktjs.common.geom.MutableChangeableAxial
 
-interface Dimension : MutableChangeableAxialValues<Int>
+interface Dimension : MutableChangeableAxial<Int>

@@ -2,8 +2,8 @@ package ru.capjack.ktjs.app.display
 
 import ru.capjack.ktjs.app.display.resolution.ResolutionResolver
 import ru.capjack.ktjs.common.Confines
-import ru.capjack.ktjs.common.geom.AxialValues
-import ru.capjack.ktjs.common.geom.AxialValuesImpl
+import ru.capjack.ktjs.common.geom.Axial
+import ru.capjack.ktjs.common.geom.AxialImpl
 import ru.capjack.ktjs.common.geom.Axis
 import ru.capjack.ktjs.common.geom.calculateRatio
 import ru.capjack.ktjs.common.geom.isInside
@@ -15,7 +15,7 @@ import ru.capjack.ktjs.common.time.TimeSystem
 class DisplaySystemImpl(
 	time: TimeSystem,
 	resolutionResolver: ResolutionResolver,
-	stageSizeConfines: Confines<AxialValues<Int>>
+	stageSizeConfines: Confines<Axial<Int>>
 ) : DisplaySystem {
 	
 	private val _stage = StageImpl(stageSizeConfines)
@@ -28,10 +28,10 @@ class DisplaySystemImpl(
 	}
 	
 	override fun setCanvasSize(width: Int, height: Int) {
-		setCanvasSize(AxialValuesImpl(width, height))
+		setCanvasSize(AxialImpl(width, height))
 	}
 	
-	override fun setCanvasSize(size: AxialValues<Int>) {
+	override fun setCanvasSize(size: Axial<Int>) {
 		val innerSize = _stage.sizeConfines.min
 		val outerSize = _stage.sizeConfines.max
 		

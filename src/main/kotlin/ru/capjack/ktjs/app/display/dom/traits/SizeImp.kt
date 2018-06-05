@@ -1,8 +1,8 @@
 package ru.capjack.ktjs.app.display.dom.traits
 
-import ru.capjack.ktjs.common.geom.MutableChangeableAxialValuesImpl
+import ru.capjack.ktjs.common.geom.MutableChangeableAxialImpl
 
-internal class SizeImp : Dimension, MutableChangeableAxialValuesImpl<Int>(0, 0) {
+internal class SizeImp : Dimension, MutableChangeableAxialImpl<Int>(0, 0) {
 	override var x: Int
 		get() = super.x
 		set(value) {

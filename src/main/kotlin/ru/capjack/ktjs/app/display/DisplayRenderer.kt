@@ -1,7 +1,7 @@
 package ru.capjack.ktjs.app.display
 
 import org.w3c.dom.HTMLCanvasElement
-import ru.capjack.ktjs.common.geom.AxialValues
+import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 import ru.capjack.ktjs.wrapper.pixi.RenderTexture
 
@@ -11,7 +11,7 @@ interface DisplayRenderer {
 	val resolution: Double
 	val bitmapImageResolution: Int
 	
-	fun resize(size: AxialValues<Int>)
+	fun resize(size: Axial<Int>)
 	
 	fun render(display: DisplayObject)
 	

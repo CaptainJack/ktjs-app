@@ -11,8 +11,8 @@ import ru.capjack.ktjs.app.display.dom.traits.SpaceType
 import ru.capjack.ktjs.common.Cancelable
 import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.Destroyable
-import ru.capjack.ktjs.common.geom.ChangeableAxialValues
-import ru.capjack.ktjs.common.geom.MutableChangeableAxialValuesImpl
+import ru.capjack.ktjs.common.geom.ChangeableAxial
+import ru.capjack.ktjs.common.geom.MutableChangeableAxialImpl
 import ru.capjack.ktjs.common.observable
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
@@ -25,7 +25,7 @@ abstract class Node : Destroyable {
 	val size: Dimension
 		get() = _size
 	
-	val contentSize: ChangeableAxialValues<Int>
+	val contentSize: ChangeableAxial<Int>
 		get() = _contentSize
 	
 	var positionRule: PositionRule
@@ -44,9 +44,9 @@ abstract class Node : Destroyable {
 	
 	abstract val display: DisplayObject
 	
-	protected val _contentSize = MutableChangeableAxialValuesImpl(0, 0)
+	protected val _contentSize = MutableChangeableAxialImpl(0, 0)
 	
-	private val _position = MutableChangeableAxialValuesImpl(0, 0)
+	private val _position = MutableChangeableAxialImpl(0, 0)
 	private val _size = SizeImp()
 	
 	private var positionRuleBindingInside: Cancelable = CancelableDummy

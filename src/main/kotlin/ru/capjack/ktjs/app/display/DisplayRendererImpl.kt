@@ -2,7 +2,7 @@ package ru.capjack.ktjs.app.display
 
 import org.w3c.dom.HTMLCanvasElement
 import ru.capjack.ktjs.app.display.resolution.ResolutionResolver
-import ru.capjack.ktjs.common.geom.AxialValues
+import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.js.jso
 import ru.capjack.ktjs.common.replaceIfNotFinite
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
@@ -13,7 +13,7 @@ import ru.capjack.ktjs.wrapper.pixi.utils.skipHello
 import kotlin.browser.document
 import kotlin.browser.window
 
-class DisplayRendererImpl(size: AxialValues<Int>, resolutionResolver: ResolutionResolver) : DisplayRenderer {
+class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolver) : DisplayRenderer {
 	
 	override val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
 	override val pixelRatio: Double = window.devicePixelRatio.replaceIfNotFinite(1.0)
@@ -30,7 +30,7 @@ class DisplayRendererImpl(size: AxialValues<Int>, resolutionResolver: Resolution
 		view = canvas
 	})
 	
-	override fun resize(size: AxialValues<Int>) {
+	override fun resize(size: Axial<Int>) {
 		pixiRenderer.resize(size.x, size.y)
 		canvas.style.width = "${size.x}px"
 		canvas.style.height = "${size.y}px"
