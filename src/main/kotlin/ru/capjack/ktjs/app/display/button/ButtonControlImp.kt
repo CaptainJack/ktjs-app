@@ -67,6 +67,10 @@ class ButtonControlImp(
     override fun onState(handler: (new: ButtonState, old: ButtonState) -> Unit): Cancelable {
         return stateHandlers.add(handler)
     }
+    
+    override fun onState(handler: (ButtonState) -> Unit): Cancelable {
+        return stateHandlers.add(handler)
+    }
 
     override fun setSound(sound: Sound, volume: Double) {
         soundFlow?.stop()
