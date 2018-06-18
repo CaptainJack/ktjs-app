@@ -19,10 +19,11 @@ internal class AssetsProducerImpl(
 	private val fontsRegistry: FontFaceRegistry
 ) : AssetsCollector, AssetsProducer {
 	
+	private var fonts: MutableList<FontFace> = mutableListOf()
 	private var imageMakers: MutableMap<String, ImageAssetMaker> = mutableMapOf()
 	private var imageAtlasMakers: MutableMap<String, ImageAtlasAssetMaker> = mutableMapOf()
-	private var fonts: MutableList<FontFace> = mutableListOf()
 	private var soundMakers: MutableMap<String, SoundAssetMaker> = mutableMapOf()
+	private var xmlMakers: MutableMap<String, XmlAssetMaker> = mutableMapOf()
 	
 	override fun addFont(face: FontFace): FontAsset {
 		fontsRegistry[face].ifNotNull {
@@ -72,12 +73,25 @@ internal class AssetsProducerImpl(
 		return maker.asset
 	}
 	
+	override fun addXml(name: String, path: FilePath): XmlAsset {
+		if (xmlMakers.containsKey(name)) {
+			throw IllegalStateException("Asset \"$name\" is already added")
+		}
+		
+		val maker = XmlAssetMaker(baseUrl.resolvePath(path))
+		
+		xmlMakers[name] = maker
+		
+		return maker.asset
+	}
+	
 	override fun load(): Progress {
 		val loaders: MutableList<ProgressRunner> = mutableListOf()
 		
 		loaders.addAll(imageMakers.values)
 		loaders.addAll(imageAtlasMakers.values)
 		loaders.addAll(soundMakers.values)
+		loaders.addAll(xmlMakers.values)
 		
 		if (fonts.isNotEmpty()) {
 			loaders.add(FontsLoader(fontsBaseUrl, fonts))
@@ -90,7 +104,8 @@ internal class AssetsProducerImpl(
 		val collection = AssetsImpl(
 			imageMakers.mapValues { it.value.asset },
 			imageAtlasMakers.mapValues { it.value.asset },
-			soundMakers.mapValues { it.value.asset }
+			soundMakers.mapValues { it.value.asset },
+			xmlMakers.mapValues { it.value.asset }
 		)
 		val progress = load()
 		progress.onComplete { receiver(collection) }

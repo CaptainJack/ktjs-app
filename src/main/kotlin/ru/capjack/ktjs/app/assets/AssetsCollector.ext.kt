@@ -30,3 +30,7 @@ fun AssetsCollector.addSound(name: String, path: String): SoundAsset {
 fun AssetsCollector.addSounds(vararg names: String) {
 	names.forEach { addSound(it) }
 }
+
+fun AssetsCollector.addXml(name: String, path: String): XmlAsset {
+	return addXml(name, FilePaths.get(path))
+}

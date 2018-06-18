@@ -12,5 +12,7 @@ interface AssetsCollector {
 	fun addImageAtlas(name: String, path: FilePath = FilePaths.get(name)): ImageAtlasAsset
 	
 	fun addSound(name: String, path: FilePath = FilePaths.get(name)): SoundAsset
+	
+	fun addXml(name: String, path: FilePath = FilePaths.get(name)): XmlAsset
 }
 

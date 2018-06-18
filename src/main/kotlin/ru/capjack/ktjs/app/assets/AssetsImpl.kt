@@ -1,12 +1,14 @@
 package ru.capjack.ktjs.app.assets
 
+import org.w3c.dom.Document
 import ru.capjack.ktjs.app.sound.Sound
 import ru.capjack.ktjs.wrapper.pixi.Texture
 
 internal class AssetsImpl(
 	private val images: Map<String, ImageAssetImpl>,
 	private val imageAtlases: Map<String, ImageAtlasAssetImpl>,
-	private val sounds: Map<String, SoundAssetImpl>
+	private val sounds: Map<String, SoundAssetImpl>,
+	private val xmls: Map<String, XmlAssetImpl>
 ) : Assets {
 	
 	override fun getImageAsset(name: String): ImageAsset {
@@ -21,6 +23,10 @@ internal class AssetsImpl(
 		return fetchAsset(sounds, name)
 	}
 	
+	override fun getXmlAsset(name: String): XmlAsset {
+		return fetchAsset(xmls, name)
+	}
+	
 	override fun getTexture(name: String): Texture {
 		return getImageAsset(name).texture
 	}
@@ -31,6 +37,10 @@ internal class AssetsImpl(
 	
 	override fun getSound(name: String): Sound {
 		return getSoundAsset(name).sound
+	}
+	
+	override fun getXml(name: String): Document {
+		return getXmlAsset(name).document
 	}
 	
 	private fun <A : Asset> fetchAsset(map: Map<String, A>, name: String): A {

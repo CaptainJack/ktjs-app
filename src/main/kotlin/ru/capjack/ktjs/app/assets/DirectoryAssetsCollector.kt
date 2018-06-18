@@ -22,4 +22,8 @@ internal class DirectoryAssetsCollector(
 	override fun addSound(name: String, path: FilePath): SoundAsset {
 		return target.addSound(dir.valueAsDirectory + name, dir.resolve(path))
 	}
+	
+	override fun addXml(name: String, path: FilePath): XmlAsset {
+		return target.addXml(dir.valueAsDirectory + name, dir.resolve(path))
+	}
 }
