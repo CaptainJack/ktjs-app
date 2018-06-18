@@ -2,6 +2,7 @@ package ru.capjack.ktjs.app.assets
 
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.events.Event
 import ru.capjack.ktjs.app.display.DisplayRenderer
 import ru.capjack.ktjs.common.rl.Url
@@ -21,7 +22,7 @@ class ImageLoader(
 	private val receiver: (BaseTexture) -> Unit
 ) {
 	
-	private var image: dynamic = js("new Image()")
+	private var image: HTMLImageElement = js("new Image()").unsafeCast<HTMLImageElement>()
 	
 	init {
 		image.onload = ::processOnLoad
@@ -29,7 +30,8 @@ class ImageLoader(
 		image.src = url.value
 	}
 	
-	private fun processOnLoad(@Suppress("UNUSED_PARAMETER") event: Event) {
+	@Suppress("UNUSED_PARAMETER")
+	private fun processOnLoad(event: Event) {
 		releaseImage()
 		
 		val fileName = url.path.name
@@ -37,11 +39,9 @@ class ImageLoader(
 		val texture =
 			if (fileName.extension == "svg") {
 				createSvgTexture()
-			}
-			else if (fileName.extension == "jpg" && (fileName.base.endsWith(".ah") || fileName.base.endsWith(".av"))) {
+			} else if (fileName.extension == "jpg" && (fileName.base.endsWith(".ah") || fileName.base.endsWith(".av"))) {
 				createJpgaTexture()
-			}
-			else {
+			} else {
 				BaseTexture(image, resolution = settings.imageResolution)
 			}
 		
@@ -50,8 +50,8 @@ class ImageLoader(
 	
 	private fun createSvgTexture(): BaseTexture {
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
-		val width = image.naturalWidth as Int
-		val height = image.naturalHeight as Int
+		val width = image.naturalWidth
+		val height = image.naturalHeight
 		
 		canvas.width = width * settings.imageResolution
 		canvas.height = height * settings.imageResolution
@@ -68,8 +68,8 @@ class ImageLoader(
 	private fun createJpgaTexture(): BaseTexture {
 		val h = url.path.name.base.endsWith(".ah")
 		
-		val width = image.naturalWidth as Double / settings.imageResolution
-		val height = image.naturalHeight as Double / settings.imageResolution
+		val width = image.naturalWidth.toDouble() / settings.imageResolution
+		val height = image.naturalHeight.toDouble() / settings.imageResolution
 		val frameWidth = if (h) width / 2 else width
 		val frameHeight = if (h) height else height / 2
 		
@@ -93,9 +93,10 @@ class ImageLoader(
 		return renderedTextureBase
 	}
 	
-	private fun processOnError(event: Event) {
+	@Suppress("UNUSED_PARAMETER")
+	private fun processOnError(message: dynamic, source: String, line: Int, col: Int, error: Any?) {
 		releaseImage()
-		throw RuntimeException("Failed to load image \"$url\" ($event)")
+		throw RuntimeException("Failed to load image \"$url\" ($message)")
 	}
 	
 	private fun releaseImage() {

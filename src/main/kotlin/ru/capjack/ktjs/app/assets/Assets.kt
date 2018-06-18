@@ -1,6 +1,7 @@
 package ru.capjack.ktjs.app.assets
 
 import org.w3c.dom.Document
+import org.w3c.dom.HTMLVideoElement
 import ru.capjack.ktjs.app.sound.Sound
 import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.wrapper.pixi.Texture
@@ -14,6 +15,8 @@ interface Assets : Destroyable {
 	
 	fun getXmlAsset(name: String): XmlAsset
 	
+	fun getVideoAsset(name: String): VideoAsset
+	
 	fun getTexture(name: String): Texture
 	
 	fun getTexture(atlasName: String, frameName: String): Texture
@@ -21,4 +24,6 @@ interface Assets : Destroyable {
 	fun getSound(name: String): Sound
 	
 	fun getXml(name: String): Document
+	
+	fun getVideo(name: String): HTMLVideoElement
 }

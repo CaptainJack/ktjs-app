@@ -34,3 +34,11 @@ fun AssetsCollector.addSounds(vararg names: String) {
 fun AssetsCollector.addXml(name: String, path: String): XmlAsset {
 	return addXml(name, FilePaths.get(path))
 }
+
+fun AssetsCollector.addVideo(name: String, path: String): VideoAsset {
+	return addVideo(name, FilePaths.get(path))
+}
+
+fun AssetsCollector.addVideos(vararg names: String) {
+	names.forEach { addVideo(it) }
+}

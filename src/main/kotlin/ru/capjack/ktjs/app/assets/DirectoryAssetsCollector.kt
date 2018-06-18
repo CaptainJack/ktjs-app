@@ -26,4 +26,8 @@ internal class DirectoryAssetsCollector(
 	override fun addXml(name: String, path: FilePath): XmlAsset {
 		return target.addXml(dir.valueAsDirectory + name, dir.resolve(path))
 	}
+	
+	override fun addVideo(name: String, path: FilePath): VideoAsset {
+		return target.addVideo(dir.valueAsDirectory + name, dir.resolve(path))
+	}
 }

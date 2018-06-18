@@ -24,6 +24,7 @@ internal class AssetsProducerImpl(
 	private var imageAtlasMakers: MutableMap<String, ImageAtlasAssetMaker> = mutableMapOf()
 	private var soundMakers: MutableMap<String, SoundAssetMaker> = mutableMapOf()
 	private var xmlMakers: MutableMap<String, XmlAssetMaker> = mutableMapOf()
+	private var videoMakers: MutableMap<String, VideoAssetMaker> = mutableMapOf()
 	
 	override fun addFont(face: FontFace): FontAsset {
 		fontsRegistry[face].ifNotNull {
@@ -38,51 +39,44 @@ internal class AssetsProducerImpl(
 	}
 	
 	override fun addImage(name: String, path: FilePath): ImageAsset {
-		if (imageMakers.containsKey(name)) {
-			throw IllegalStateException("Asset \"$name\" is already added")
+		return add(imageMakers, name, convertImagePath(path)) {
+			ImageAssetMaker(it, renderer, settings)
 		}
-		
-		val maker = ImageAssetMaker(baseUrl.resolvePath(convertImagePath(path)), renderer, settings)
-		
-		imageMakers[name] = maker
-		
-		return maker.asset
 	}
 	
 	override fun addImageAtlas(name: String, path: FilePath): ImageAtlasAsset {
-		if (imageAtlasMakers.containsKey(name)) {
-			throw IllegalStateException("Asset asset \"$name\" is already added")
+		return add(imageAtlasMakers, name, path) {
+			ImageAtlasAssetMaker(it, renderer, settings)
 		}
-		
-		val maker = ImageAtlasAssetMaker(baseUrl.resolvePath(path), renderer, settings)
-		
-		imageAtlasMakers[name] = maker
-		
-		return maker.asset
 	}
 	
 	override fun addSound(name: String, path: FilePath): SoundAsset {
-		if (soundMakers.containsKey(name)) {
-			throw IllegalStateException("Asset \"$name\" is already added")
+		return add(soundMakers, name, path) {
+			SoundAssetMaker(it)
 		}
-		
-		val maker = SoundAssetMaker(baseUrl.resolvePath(path))
-		
-		soundMakers[name] = maker
-		
-		return maker.asset
 	}
 	
 	override fun addXml(name: String, path: FilePath): XmlAsset {
-		if (xmlMakers.containsKey(name)) {
+		return add(xmlMakers, name, path) {
+			XmlAssetMaker(it)
+		}
+	}
+	
+	override fun addVideo(name: String, path: FilePath): VideoAsset {
+		return add(videoMakers, name, path) {
+			VideoAssetMaker(it)
+		}
+	}
+	
+	private fun <A : AbstractAsset, M : AbstractAssetMaker<A>> add(makers: MutableMap<String, M>, name: String, path: FilePath, makerCreator: (Url) -> M): A {
+		if (makers.containsKey(name)) {
 			throw IllegalStateException("Asset \"$name\" is already added")
 		}
 		
-		val maker = XmlAssetMaker(baseUrl.resolvePath(path))
-		
-		xmlMakers[name] = maker
-		
-		return maker.asset
+		return makerCreator
+			.invoke(baseUrl.resolvePath(path))
+			.also { makers[name] = it }
+			.asset
 	}
 	
 	override fun load(): Progress {
@@ -92,6 +86,7 @@ internal class AssetsProducerImpl(
 		loaders.addAll(imageAtlasMakers.values)
 		loaders.addAll(soundMakers.values)
 		loaders.addAll(xmlMakers.values)
+		loaders.addAll(videoMakers.values)
 		
 		if (fonts.isNotEmpty()) {
 			loaders.add(FontsLoader(fontsBaseUrl, fonts))
@@ -105,7 +100,8 @@ internal class AssetsProducerImpl(
 			imageMakers.mapValues { it.value.asset },
 			imageAtlasMakers.mapValues { it.value.asset },
 			soundMakers.mapValues { it.value.asset },
-			xmlMakers.mapValues { it.value.asset }
+			xmlMakers.mapValues { it.value.asset },
+			videoMakers.mapValues { it.value.asset }
 		)
 		val progress = load()
 		progress.onComplete { receiver(collection) }

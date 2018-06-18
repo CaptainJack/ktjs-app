@@ -1,6 +1,7 @@
 package ru.capjack.ktjs.app.assets
 
 import ru.capjack.ktjs.app.sound.Sound
+import ru.capjack.ktjs.app.sound.howler.HowlerSound
 
 internal class SoundAssetImpl : AbstractAsset(), SoundAsset {
 	override val sound: Sound
@@ -9,9 +10,9 @@ internal class SoundAssetImpl : AbstractAsset(), SoundAsset {
 			return _sound!!
 		}
 	
-	private var _sound: Sound? = null
+	private var _sound: HowlerSound? = null
 	
-	fun load(sound: Sound) {
+	fun load(sound: HowlerSound) {
 		_sound = sound
 		completeLoad()
 	}

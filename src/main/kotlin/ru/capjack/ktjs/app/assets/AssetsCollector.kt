@@ -14,5 +14,7 @@ interface AssetsCollector {
 	fun addSound(name: String, path: FilePath = FilePaths.get(name)): SoundAsset
 	
 	fun addXml(name: String, path: FilePath = FilePaths.get(name)): XmlAsset
+	
+	fun addVideo(name: String, path: FilePath = FilePaths.get(name)): VideoAsset
 }
 
