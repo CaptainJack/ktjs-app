@@ -42,3 +42,7 @@ fun AssetsCollector.addVideo(name: String, path: String): VideoAsset {
 fun AssetsCollector.addVideos(vararg names: String) {
 	names.forEach { addVideo(it) }
 }
+
+fun AssetsCollector.addJson(name: String, path: String): JsonAsset {
+	return addJson(name, FilePaths.get(path))
+}

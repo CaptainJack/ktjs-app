@@ -30,4 +30,8 @@ internal class DirectoryAssetsCollector(
 	override fun addVideo(name: String, path: FilePath): VideoAsset {
 		return target.addVideo(dir.valueAsDirectory + name, dir.resolve(path))
 	}
+	
+	override fun addJson(name: String, path: FilePath): JsonAsset {
+		return target.addJson(dir.valueAsDirectory + name, dir.resolve(path))
+	}
 }

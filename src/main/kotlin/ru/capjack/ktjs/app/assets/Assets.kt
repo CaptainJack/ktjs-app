@@ -17,6 +17,8 @@ interface Assets : Destroyable {
 	
 	fun getVideoAsset(name: String): VideoAsset
 	
+	fun getJsonAsset(name: String): JsonAsset
+	
 	fun getTexture(name: String): Texture
 	
 	fun getTexture(atlasName: String, frameName: String): Texture
@@ -26,4 +28,6 @@ interface Assets : Destroyable {
 	fun getXml(name: String): Document
 	
 	fun getVideo(name: String): HTMLVideoElement
+	
+	fun getJson(name: String): dynamic
 }

@@ -25,6 +25,7 @@ internal class AssetsProducerImpl(
 	private var soundMakers: MutableMap<String, SoundAssetMaker> = mutableMapOf()
 	private var xmlMakers: MutableMap<String, XmlAssetMaker> = mutableMapOf()
 	private var videoMakers: MutableMap<String, VideoAssetMaker> = mutableMapOf()
+	private var jsonMakers: MutableMap<String, JsonAssetMaker> = mutableMapOf()
 	
 	override fun addFont(face: FontFace): FontAsset {
 		fontsRegistry[face].ifNotNull {
@@ -68,6 +69,12 @@ internal class AssetsProducerImpl(
 		}
 	}
 	
+	override fun addJson(name: String, path: FilePath): JsonAsset {
+		return add(jsonMakers, name, path) {
+			JsonAssetMaker(it)
+		}
+	}
+	
 	private fun <A : AbstractAsset, M : AbstractAssetMaker<A>> add(makers: MutableMap<String, M>, name: String, path: FilePath, makerCreator: (Url) -> M): A {
 		if (makers.containsKey(name)) {
 			throw IllegalStateException("Asset \"$name\" is already added")
@@ -101,7 +108,8 @@ internal class AssetsProducerImpl(
 			imageAtlasMakers.mapValues { it.value.asset },
 			soundMakers.mapValues { it.value.asset },
 			xmlMakers.mapValues { it.value.asset },
-			videoMakers.mapValues { it.value.asset }
+			videoMakers.mapValues { it.value.asset },
+			jsonMakers.mapValues { it.value.asset }
 		)
 		val progress = load()
 		progress.onComplete { receiver(collection) }
