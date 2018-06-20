@@ -94,6 +94,7 @@ internal class AssetsProducerImpl(
 		loaders.addAll(soundMakers.values)
 		loaders.addAll(xmlMakers.values)
 		loaders.addAll(videoMakers.values)
+		loaders.addAll(jsonMakers.values)
 		
 		if (fonts.isNotEmpty()) {
 			loaders.add(FontsLoader(fontsBaseUrl, fonts))
