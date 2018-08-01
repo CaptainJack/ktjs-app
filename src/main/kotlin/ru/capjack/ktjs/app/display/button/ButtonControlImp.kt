@@ -3,9 +3,9 @@ package ru.capjack.ktjs.app.display.button
 import ru.capjack.ktjs.app.sound.Sound
 import ru.capjack.ktjs.app.sound.SoundFlow
 import ru.capjack.ktjs.common.Cancelable
+import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.common.ProcedureGroup
-import ru.capjack.ktjs.common.observable
 import ru.capjack.ktjs.wrapper.pixi.Container
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 

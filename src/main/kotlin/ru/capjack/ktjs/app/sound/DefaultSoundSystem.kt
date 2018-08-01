@@ -1,6 +1,6 @@
 package ru.capjack.ktjs.app.sound
 
-import ru.capjack.ktjs.common.observable
+import ru.capjack.ktjs.common.Delegates.observable
 
 class DefaultSoundSystem : SoundSystem {
 	override var volume: Double by observable(1.0, ::makeVolume)

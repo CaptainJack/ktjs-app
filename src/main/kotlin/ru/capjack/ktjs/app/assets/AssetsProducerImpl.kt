@@ -3,7 +3,6 @@ package ru.capjack.ktjs.app.assets
 import ru.capjack.ktjs.app.assets.font.FontFace
 import ru.capjack.ktjs.app.assets.font.FontFaceRegistry
 import ru.capjack.ktjs.app.display.DisplayRenderer
-import ru.capjack.ktjs.common.ifNotNull
 import ru.capjack.ktjs.common.progress.CompositeProgressRunner
 import ru.capjack.ktjs.common.progress.Progress
 import ru.capjack.ktjs.common.progress.ProgressRunner
@@ -28,7 +27,7 @@ internal class AssetsProducerImpl(
 	private var jsonMakers: MutableMap<String, JsonAssetMaker> = mutableMapOf()
 	
 	override fun addFont(face: FontFace): FontAsset {
-		fontsRegistry[face].ifNotNull {
+		fontsRegistry[face]?.let {
 			return it
 		}
 		
