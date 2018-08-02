@@ -23,9 +23,9 @@ class Image(
 	}
 	
 	private fun processChangeTexture() {
-		assignContentSizeByDisplay()
+		updateContentSizeByDisplay()
 		if (texture.baseTexture.hasLoaded) {
-			texture.once("update", ::assignContentSizeByDisplay)
+			texture.once("update", ::updateContentSizeByDisplay)
 		}
 	}
 }

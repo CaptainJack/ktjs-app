@@ -9,11 +9,11 @@ class Picture(
 ) : Tail(deformable) {
 	
 	init {
-		assignContentSizeByDisplay()
+		updateContentSizeByDisplay()
 	}
 	
 	fun refreshContentSize() {
-		assignContentSizeByDisplay()
+		updateContentSizeByDisplay()
 	}
 }
 

@@ -36,7 +36,7 @@ open class Graphics(
 	fun endDraw(): Graphics {
 		if (--drawCallsCounter <= 0) {
 			drawCallsCounter = 0
-			assignContentSizeByDisplay()
+			updateContentSizeByDisplay()
 		}
 		return this
 	}
@@ -87,7 +87,7 @@ open class Graphics(
 	
 	private fun tryUpdateSize(): Graphics {
 		if (drawCallsCounter == 0) {
-			assignContentSizeByDisplay()
+			updateContentSizeByDisplay()
 		}
 		return this
 	}

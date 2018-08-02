@@ -12,7 +12,7 @@ abstract class Tail(deformable: Boolean) : NodeOfContainer() {
 		sizeRule = SizeRules.STRETCHING
 	}
 	
-	protected fun assignContentSizeByDisplay() {
+	protected fun updateContentSizeByDisplay() {
 		_contentSize.set(
 			(display.width / display.scale.x).toInt(),
 			(display.height / display.scale.y).toInt()

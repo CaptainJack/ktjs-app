@@ -39,6 +39,6 @@ class Text(
 	}
 	
 	private fun processChangedValue() {
-		assignContentSizeByDisplay()
+		updateContentSizeByDisplay()
 	}
 }
