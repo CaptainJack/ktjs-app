@@ -16,7 +16,7 @@ import kotlin.browser.window
 class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolver) : DisplayRenderer {
 	
 	override val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
-	override val pixelRatio: Double = window.devicePixelRatio.replaceIf({ it.isFinite() }, 1.0)
+	override val pixelRatio: Double = window.devicePixelRatio.replaceIf({ !it.isFinite() }, 1.0)
 	override val resolution: Double = resolutionResolver.resolveRendererResolution(pixelRatio)
 	override val bitmapImageResolution: Int = resolutionResolver.resolveBitmapImageResolution(resolution)
 	
