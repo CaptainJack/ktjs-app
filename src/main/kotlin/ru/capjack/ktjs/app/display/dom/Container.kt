@@ -1,8 +1,6 @@
 package ru.capjack.ktjs.app.display.dom
 
-import ru.capjack.ktjs.app.display.dom.traits.SpaceType
 import ru.capjack.ktjs.common.geom.Axis
-import ru.capjack.ktjs.common.geom.axial
 import ru.capjack.ktjs.common.geom.mutableAxial
 import ru.capjack.ktjs.common.geom.setMax
 import ru.capjack.ktjs.wrapper.pixi.Container
@@ -92,13 +90,10 @@ open class Container : Node(), NodeList {
 	}
 	
 	protected open fun updateContentSize() {
-		val ai = axial { sizeRule.isApplicable(SpaceType.INSIDE, it) }
 		val cs = mutableAxial(0)
 		
 		for (node in nodes) {
-			Axis.forEach {
-				cs.setMax(it, node.size[it] + if (ai[it] && node.positionRule.isApplicable(SpaceType.OUTSIDE, it)) 0 else node.position[it])
-			}
+			Axis.forEach { cs.setMax(it, node.size[it] + node.position[it]) }
 		}
 		
 		mutableContentSize.set(cs)
@@ -109,6 +104,7 @@ open class Container : Node(), NodeList {
 			return false
 		}
 		node.container = this
+		node.position.onChange(updateContentSizeRef)
 		node.size.onChange(updateContentSizeRef)
 		
 		_nodes.add(node)
@@ -120,8 +116,9 @@ open class Container : Node(), NodeList {
 	private fun doRemoveNode(node: Node): Boolean {
 		if (_nodes.remove(node)) {
 			display.removeChild(node.display)
-			node.container = null
+			node.position.offChange(updateContentSizeRef)
 			node.size.offChange(updateContentSizeRef)
+			node.container = null
 			return true
 		}
 		return false

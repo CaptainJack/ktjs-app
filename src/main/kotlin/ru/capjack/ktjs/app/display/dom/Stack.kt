@@ -13,6 +13,11 @@ class Stack(
 ) : Container() {
 	
 	override fun processChangeNodes() {
+		placeNodes()
+		super.processChangeNodes()
+	}
+	
+	private fun placeNodes() {
 		var offset = 0
 		
 		val oppositeAxis = axis.opposite
@@ -26,7 +31,6 @@ class Stack(
 			space[oppositeAxis] = size[oppositeAxis]
 		}
 		
-		
 		for (node in nodes) {
 			node.position[axis] = offset
 			offset += gap + node.size[axis]
@@ -38,7 +42,5 @@ class Stack(
 				node.positionRule.apply(node.position, space, node.size, oppositeAxis)
 			}
 		}
-		
-		super.processChangeNodes()
 	}
 }
