@@ -1,5 +1,6 @@
 package ru.capjack.ktjs.app.display
 
+import ru.capjack.ktjs.app.display.dom.Container
 import ru.capjack.ktjs.app.display.dom.NodeList
 import ru.capjack.ktjs.common.Confines
 import ru.capjack.ktjs.common.geom.Axial
@@ -9,27 +10,27 @@ import ru.capjack.ktjs.wrapper.pixi.set
 
 internal class StageImpl private constructor(
 	override val sizeConfines: Confines<Axial<Int>>,
-	private val box: StageBox
-) : Stage, NodeList by box {
+	private val container: Container
+) : Stage, NodeList by container {
 	
 	val display: DisplayObject
-		get() = box.display
+		get() = container.display
 	
 	override val size: ChangeableAxial<Int>
-		get() = box.size
+		get() = container.size
 	
 	override val scale: Double
-		get() = box.display.scale.x
+		get() = container.display.scale.x
 	
-	constructor(sizeConfines: Confines<Axial<Int>>) : this(sizeConfines, StageBox())
+	constructor(sizeConfines: Confines<Axial<Int>>) : this(sizeConfines, Container())
 	
 	fun locate(position: Axial<Int>, size: Axial<Int>, scale: Double) {
-		box.display.scale.set(scale)
-		box.position.set(position)
-		box.size.set(size)
+		container.display.scale.set(scale)
+		container.position.set(position)
+		container.size.set(size)
 	}
 	
 	override fun showSizeTester() {
-		box.addNode(StageSizeTester(this))
+		container.addNode(StageSizeTester(this))
 	}
 }

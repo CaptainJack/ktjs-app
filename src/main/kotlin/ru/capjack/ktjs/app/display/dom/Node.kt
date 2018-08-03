@@ -14,7 +14,7 @@ import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.common.geom.ChangeableAxial
 import ru.capjack.ktjs.common.geom.MutableChangeableAxialImpl
-import ru.capjack.ktjs.wrapper.pixi.DisplayObject
+import ru.capjack.ktjs.wrapper.pixi.Graphics
 import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
 import ru.capjack.ktjs.wrapper.pixi.set
 
@@ -26,7 +26,7 @@ abstract class Node : Destroyable {
 		get() = _size
 	
 	val contentSize: ChangeableAxial<Int>
-		get() = _contentSize
+		get() = mutableContentSize
 	
 	var positionRule: PositionRule
 		by observable(PositionRules.NOTHING, ::processChangePositionRule)
@@ -42,9 +42,9 @@ abstract class Node : Destroyable {
 	
 	var alpha: Double by observable(1.0, ::processChangeAlpha)
 	
-	abstract val display: DisplayObject
+	abstract val display: ru.capjack.ktjs.wrapper.pixi.Container
 	
-	protected val _contentSize = MutableChangeableAxialImpl(0, 0)
+	protected val mutableContentSize = MutableChangeableAxialImpl(0, 0)
 	
 	private val _position = MutableChangeableAxialImpl(0, 0)
 	private val _size = SizeImp()
@@ -69,16 +69,26 @@ abstract class Node : Destroyable {
 		}
 	
 	init {
-		position.onChange {
-			display.position.set(position)
+		position.onChange { display.position.set(position) }
+	}
+	
+	fun showDebugBackground(color: Int = 0xFF0000) {
+		val g = Graphics().apply {  }
+		
+		fun draw() {
+			g.clear().beginFill(color, 0.2).drawRect(0, 0, size.x, size.y).endFill()
 		}
+		
+		draw()
+		size.onChange(::draw)
+		display.addChildAt(g, 0)
 	}
 	
 	override fun destroy() {
 		container = null
 		_position.destroy()
 		_size.destroy()
-		_contentSize.destroy()
+		mutableContentSize.destroy()
 		display.destroy()
 	}
 	
@@ -128,7 +138,7 @@ abstract class Node : Destroyable {
 		sizeRuleBindingInside.cancel()
 		sizeRuleBindingInside = bindRule(sizeRule, SpaceType.INSIDE) {
 			applySizeRuleInside()
-			contentSize.onChange(::applySizeRuleInside)
+			mutableContentSize.onChange(::applySizeRuleInside)
 		}
 	}
 	
@@ -149,7 +159,7 @@ abstract class Node : Destroyable {
 	}
 	
 	private fun applySizeRuleInside() {
-		sizeRule.apply(size, _contentSize, SpaceType.INSIDE)
+		sizeRule.apply(size, mutableContentSize, SpaceType.INSIDE)
 	}
 	
 	private fun applySizeRuleOutside() {
@@ -162,11 +172,13 @@ abstract class Node : Destroyable {
 		if (value == 1.0) {
 			alphaFilter = null
 			display.filters = emptyArray()
-		} else {
+		}
+		else {
 			if (alphaFilter == null) {
 				alphaFilter = AlphaFilter(value)
 				display.filters = arrayOf(alphaFilter!!)
-			} else {
+			}
+			else {
 				alphaFilter!!.alpha = value
 			}
 		}

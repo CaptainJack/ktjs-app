@@ -7,13 +7,14 @@ import ru.capjack.ktjs.common.geom.mutableAxial
 import ru.capjack.ktjs.common.geom.setMax
 import ru.capjack.ktjs.wrapper.pixi.Container
 
-abstract class Container : NodeOfContainer(), NodeList {
+open class Container : Node(), NodeList {
 	final override val display = Container()
 	
 	override val nodes: List<Node>
 		get() = _nodes
 	
 	private val _nodes: MutableList<Node> = mutableListOf()
+	private val updateContentSizeRef = ::updateContentSize
 	
 	override fun getNode(index: Int): Node {
 		return _nodes.elementAt(index)
@@ -86,7 +87,22 @@ abstract class Container : NodeOfContainer(), NodeList {
 		return true
 	}
 	
-	private val updateContentSizeRef = ::updateContentSize
+	protected open fun processChangeNodes() {
+		updateContentSize()
+	}
+	
+	protected open fun updateContentSize() {
+		val ai = axial { sizeRule.isApplicable(SpaceType.INSIDE, it) }
+		val cs = mutableAxial(0)
+		
+		for (node in nodes) {
+			Axis.forEach {
+				cs.setMax(it, node.size[it] + if (ai[it] && node.positionRule.isApplicable(SpaceType.OUTSIDE, it)) 0 else node.position[it])
+			}
+		}
+		
+		mutableContentSize.set(cs)
+	}
 	
 	private fun doAddNode(node: Node): Boolean {
 		if (containsNode(node)) {
@@ -110,22 +126,4 @@ abstract class Container : NodeOfContainer(), NodeList {
 		}
 		return false
 	}
-	
-	protected open fun processChangeNodes() {
-		updateContentSize()
-	}
-	
-	protected open fun updateContentSize() {
-		val ai = axial { sizeRule.isApplicable(SpaceType.INSIDE, it) }
-		val cs = mutableAxial(0)
-		
-		for (node in nodes) {
-			Axis.forEach {
-				cs.setMax(it, node.size[it] + if (ai[it] && node.positionRule.isApplicable(SpaceType.OUTSIDE, it)) 0 else node.position[it])
-			}
-		}
-		
-		_contentSize.set(cs)
-	}
-	
 }
