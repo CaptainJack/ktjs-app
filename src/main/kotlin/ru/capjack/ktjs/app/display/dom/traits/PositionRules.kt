@@ -3,9 +3,9 @@ package ru.capjack.ktjs.app.display.dom.traits
 object PositionRules {
 	val NOTHING: PositionRule = PositionRuleNothing()
 	
-	val CENTER: PositionRule = PositionRuleCenter(0)
-	val START: PositionRule = PositionRuleStart(0)
-	val END: PositionRule = PositionRuleEnd(0)
+	val START: PositionRule = PositionRuleStart()
+	val CENTER: PositionRule = PositionRuleCenter()
+	val END: PositionRule = PositionRuleEnd()
 	
 	val NOTHING_CENTER: PositionRule = PositionRuleAxial(NOTHING, CENTER)
 	val NOTHING_TOP: PositionRule = PositionRuleAxial(NOTHING, START)
@@ -24,18 +24,6 @@ object PositionRules {
 	val RIGHT_CENTER: PositionRule = PositionRuleAxial(END, CENTER)
 	val RIGHT_TOP: PositionRule = PositionRuleAxial(END, START)
 	val RIGHT_BOTTOM: PositionRule = END
-	
-	fun start(offset: Int): PositionRule {
-		return if (offset == 0) START else PositionRuleStart(offset)
-	}
-	
-	fun end(offset: Int): PositionRule {
-		return if (offset == 0) END else PositionRuleEnd(offset)
-	}
-	
-	fun center(offset: Int): PositionRule {
-		return if (offset == 0) CENTER else PositionRuleCenter(offset)
-	}
 	
 	fun factory(x: PositionRule, y: PositionRule): PositionRule {
 		return when (x) {

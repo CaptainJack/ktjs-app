@@ -36,10 +36,10 @@ class Stack(
 			offset += gap + node.size[axis]
 			
 			if (generalAlign) {
-				align.apply(node.position, space, node.size, oppositeAxis)
+				node.applyPositionRule(align, space, oppositeAxis)
 			}
 			else {
-				node.positionRule.apply(node.position, space, node.size, oppositeAxis)
+				node.applyPositionRule(node.positionRule, space, oppositeAxis)
 			}
 		}
 	}

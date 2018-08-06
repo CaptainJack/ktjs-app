@@ -12,6 +12,9 @@ import ru.capjack.ktjs.common.Cancelable
 import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
+import ru.capjack.ktjs.common.geom.Axial
+import ru.capjack.ktjs.common.geom.AxialInstances
+import ru.capjack.ktjs.common.geom.Axis
 import ru.capjack.ktjs.common.geom.ChangeableAxial
 import ru.capjack.ktjs.common.geom.MutableChangeableAxialImpl
 import ru.capjack.ktjs.wrapper.pixi.Graphics
@@ -19,6 +22,9 @@ import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
 import ru.capjack.ktjs.wrapper.pixi.set
 
 abstract class Node : Destroyable {
+	val coordinate: Dimension
+		get() = _coordinate.unsafeCast<Dimension>()
+	
 	val position: Dimension
 		get() = _position.unsafeCast<Dimension>()
 	
@@ -29,7 +35,7 @@ abstract class Node : Destroyable {
 		get() = mutableContentSize
 	
 	var positionRule: PositionRule
-		by observable(PositionRules.NOTHING, ::processChangePositionRule)
+		by observable(PositionRules.START, ::processChangePositionRule)
 	
 	var sizeRule: SizeRule
 		by observable(SizeRules.NOTHING, ::processChangeSizeRule)
@@ -46,6 +52,7 @@ abstract class Node : Destroyable {
 	
 	protected val mutableContentSize = MutableChangeableAxialImpl(0, 0)
 	
+	private val _coordinate = MutableChangeableAxialImpl(0, 0)
 	private val _position = MutableChangeableAxialImpl(0, 0)
 	private val _size = SizeImp()
 	
@@ -69,11 +76,12 @@ abstract class Node : Destroyable {
 		}
 	
 	init {
-		position.onChange { display.position.set(position) }
+		position.onChange(::applyPositionRule)
+		coordinate.onChange { display.position.set(coordinate) }
 	}
 	
 	fun showDebugBackground(color: Int = 0xFF0000) {
-		val g = Graphics().apply {  }
+		val g = Graphics().apply { }
 		
 		fun draw() {
 			g.clear().beginFill(color, 0.2).drawRect(0, 0, size.x, size.y).endFill()
@@ -82,6 +90,10 @@ abstract class Node : Destroyable {
 		draw()
 		size.onChange(::draw)
 		display.addChildAt(g, 0)
+	}
+	
+	fun applyPositionRule(rule: PositionRule, space: Axial<Int>, axis: Axis) {
+		rule.apply(coordinate, position, space, size, axis)
 	}
 	
 	override fun destroy() {
@@ -93,11 +105,13 @@ abstract class Node : Destroyable {
 	}
 	
 	protected open fun processChangeContainer() {
+		applyPositionRule()
 		processChangePositionRule()
 		processChangeSizeRule()
 	}
 	
 	protected open fun processChangePositionRule() {
+		applyPositionRule()
 		bindPositionRuleInside()
 		bindPositionRuleOutsize()
 	}
@@ -118,7 +132,6 @@ abstract class Node : Destroyable {
 		positionRuleBindingInside.cancel()
 		container?.also {
 			positionRuleBindingInside = bindRule(positionRule, SpaceType.INSIDE) {
-				applyPositionRule()
 				size.onChange(::applyPositionRule)
 			}
 		}
@@ -128,7 +141,6 @@ abstract class Node : Destroyable {
 		positionRuleBindingOutside.cancel()
 		container?.also {
 			positionRuleBindingOutside = bindRule(positionRule, SpaceType.OUTSIDE) {
-				applyPositionRule()
 				it.size.onChange(::applyPositionRule)
 			}
 		}
@@ -153,9 +165,7 @@ abstract class Node : Destroyable {
 	}
 	
 	private fun applyPositionRule() {
-		container?.also {
-			positionRule.apply(position, it.size, size)
-		}
+		positionRule.apply(coordinate, position, container?.size ?: AxialInstances.INT_0, size)
 	}
 	
 	private fun applySizeRuleInside() {
