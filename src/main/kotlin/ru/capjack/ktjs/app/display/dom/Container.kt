@@ -85,6 +85,16 @@ open class Container : Node(), NodeList {
 		return true
 	}
 	
+	override fun processAddedToStage() {
+		super.processAddedToStage()
+		_nodes.forEach(Node::callProcessAddedToStage)
+	}
+	
+	override fun processRemovedFromStage() {
+		super.processRemovedFromStage()
+		_nodes.forEach(Node::callProcessRemovedFromStage)
+	}
+	
 	protected open fun processChangeNodes() {
 		updateContentSize()
 	}

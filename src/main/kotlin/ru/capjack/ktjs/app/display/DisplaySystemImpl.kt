@@ -18,7 +18,7 @@ class DisplaySystemImpl(
 	stageSizeConfines: Confines<Axial<Int>>
 ) : DisplaySystem {
 	
-	private val _stage = StageImpl(stageSizeConfines)
+	private val _stage = StageImpl(this, stageSizeConfines)
 	
 	override val stage: Stage get() = _stage
 	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver)

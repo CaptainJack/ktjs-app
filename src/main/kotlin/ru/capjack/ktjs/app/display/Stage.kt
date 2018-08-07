@@ -6,6 +6,8 @@ import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.geom.ChangeableAxial
 
 interface Stage : NodeList {
+	val displaySystem: DisplaySystem
+	
 	val size: ChangeableAxial<Int>
 	val sizeConfines: Confines<Axial<Int>>
 	val scale: Double

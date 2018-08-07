@@ -1,5 +1,6 @@
 package ru.capjack.ktjs.app.display.dom
 
+import ru.capjack.ktjs.app.display.Stage
 import ru.capjack.ktjs.app.display.dom.traits.Dimension
 import ru.capjack.ktjs.app.display.dom.traits.DimensionRule
 import ru.capjack.ktjs.app.display.dom.traits.PositionRule
@@ -46,6 +47,9 @@ abstract class Node : Destroyable {
 			display.visible = value
 		}
 	
+	val stage: Stage?
+		get() = getState()
+	
 	var alpha: Double by observable(1.0, ::processChangeAlpha)
 	
 	abstract val display: ru.capjack.ktjs.wrapper.pixi.Container
@@ -66,12 +70,16 @@ abstract class Node : Destroyable {
 	internal var container: Container? = null
 		set(value) {
 			if (field != value) {
+				val oldStage = stage
 				field?.also {
 					field = null
 					it.removeNode(this)
 				}
 				field = value
 				processChangeContainer()
+				if (oldStage != stage) {
+					processChangeStage(oldStage)
+				}
 			}
 		}
 	
@@ -104,6 +112,10 @@ abstract class Node : Destroyable {
 		display.destroy()
 	}
 	
+	internal open fun getState(): Stage? {
+		return container?.stage
+	}
+	
 	protected open fun processChangeContainer() {
 		applyPositionRule()
 		processChangePositionRule()
@@ -119,6 +131,27 @@ abstract class Node : Destroyable {
 	protected open fun processChangeSizeRule() {
 		bindSizeRuleInside()
 		bindSizeRuleOutsize()
+	}
+	
+	protected open fun processChangeStage(old: Stage?) {
+		if (old == null) {
+			processAddedToStage()
+		}
+		else if (stage == null) {
+			processRemovedFromStage()
+		}
+	}
+	
+	protected open fun processAddedToStage() {}
+	
+	protected open fun processRemovedFromStage() {}
+	
+	internal fun callProcessAddedToStage() {
+		processAddedToStage()
+	}
+	
+	internal fun callProcessRemovedFromStage() {
+		processRemovedFromStage()
 	}
 	
 	private fun bindRule(rule: DimensionRule, type: SpaceType, binder: () -> Cancelable): Cancelable {
