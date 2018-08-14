@@ -61,6 +61,11 @@ open class Graphics(
 		return tryUpdateSize()
 	}
 	
+	fun drawEllipse(x: Number = 0, y: Number = 0, width: Number, height: Number): Graphics {
+		display.drawEllipse(x, y, width, height)
+		return tryUpdateSize()
+	}
+	
 	fun drawRoundedRect(x: Number = 0, y: Number = 0, width: Number, height: Number, radius: Number): Graphics {
 		display.drawRoundedRect(x, y, width, height, radius)
 		return tryUpdateSize()
