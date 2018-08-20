@@ -15,13 +15,14 @@ import ru.capjack.ktjs.common.time.TimeSystem
 class DisplaySystemImpl(
 	time: TimeSystem,
 	resolutionResolver: ResolutionResolver,
-	stageSizeConfines: Confines<Axial<Int>>
+	stageSizeConfines: Confines<Axial<Int>>,
+	backgroundColor: Int = 0x888888
 ) : DisplaySystem {
 	
 	private val _stage = StageImpl(this, stageSizeConfines)
 	
 	override val stage: Stage get() = _stage
-	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver)
+	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver, backgroundColor)
 	
 	init {
 		time.onEachFrame { render() }

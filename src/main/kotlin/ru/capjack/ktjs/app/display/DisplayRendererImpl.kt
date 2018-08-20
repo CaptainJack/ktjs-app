@@ -13,7 +13,7 @@ import ru.capjack.ktjs.wrapper.pixi.utils.skipHello
 import kotlin.browser.document
 import kotlin.browser.window
 
-class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolver) : DisplayRenderer {
+class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolver, backgroundColor: Int) : DisplayRenderer {
 	
 	override val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
 	override val pixelRatio: Double = window.devicePixelRatio.replaceIf({ !it.isFinite() }, 1.0)
@@ -25,7 +25,7 @@ class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolv
 		width = size.x
 		height = size.y
 		resolution = this@DisplayRendererImpl.resolution
-		backgroundColor = 0x999999
+		this.backgroundColor = backgroundColor
 		antialias = true
 		view = canvas
 	})
