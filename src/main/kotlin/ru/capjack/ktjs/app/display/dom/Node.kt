@@ -13,11 +13,7 @@ import ru.capjack.ktjs.common.Cancelable
 import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
-import ru.capjack.ktjs.common.geom.Axial
-import ru.capjack.ktjs.common.geom.AxialInstances
-import ru.capjack.ktjs.common.geom.Axis
-import ru.capjack.ktjs.common.geom.ChangeableAxial
-import ru.capjack.ktjs.common.geom.MutableChangeableAxialImpl
+import ru.capjack.ktjs.common.geom.*
 import ru.capjack.ktjs.wrapper.pixi.Graphics
 import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
 import ru.capjack.ktjs.wrapper.pixi.set
@@ -34,6 +30,14 @@ abstract class Node : Destroyable {
 	
 	val contentSize: ChangeableAxial<Int>
 		get() = mutableContentSize
+	
+	val innerSize: Axial<Int> = object : AbstractAxial<Int>() {
+		override val x: Int get() = size.x - padding.size.x
+		override val y: Int get() = size.y - padding.size.y
+	}
+	
+	var padding: Insets<Int>
+		by observable(InsetsInstances.INT_0, ::processChangePadding)
 	
 	var positionRule: PositionRule
 		by observable(PositionRules.START, ::processChangePositionRule)
@@ -84,15 +88,25 @@ abstract class Node : Destroyable {
 		}
 	
 	init {
-		position.onChange(::applyPositionRule)
-		coordinate.onChange { display.position.set(coordinate) }
+		_position.onChange(::applyPositionRule)
+		_coordinate.onChange {
+			display.position.set { _coordinate[it] + padding.leftTop[it] }
+		}
 	}
 	
 	fun showDebugBackground(color: Int = 0xFF0000) {
-		val g = Graphics().apply { }
+		val g = Graphics()
 		
 		fun draw() {
-			g.clear().beginFill(color, 0.2).drawRect(0, 0, size.x, size.y).endFill()
+			g.clear()
+				.beginFill(color, 0.2)
+				.drawRect(
+					-padding.left,
+					-padding.top,
+					size.x + padding.size.x,
+					size.y + padding.size.y
+				)
+				.endFill()
 		}
 		
 		draw()
@@ -145,6 +159,11 @@ abstract class Node : Destroyable {
 	protected open fun processAddedToStage() {}
 	
 	protected open fun processRemovedFromStage() {}
+	
+	protected open fun processChangePadding() {
+		bindSizeRuleInside()
+		bindSizeRuleOutsize()
+	}
 	
 	internal fun callProcessAddedToStage() {
 		processAddedToStage()
@@ -202,7 +221,12 @@ abstract class Node : Destroyable {
 	}
 	
 	private fun applySizeRuleInside() {
-		sizeRule.apply(size, mutableContentSize, SpaceType.INSIDE)
+		val ps = padding.size
+		val space =
+			if (ps.isEquals(0)) mutableContentSize
+			else axial { mutableContentSize[it] + ps[it] }
+		
+		sizeRule.apply(size, space, SpaceType.INSIDE)
 	}
 	
 	private fun applySizeRuleOutside() {
