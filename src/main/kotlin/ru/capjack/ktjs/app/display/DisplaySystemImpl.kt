@@ -16,13 +16,13 @@ class DisplaySystemImpl(
 	time: TimeSystem,
 	resolutionResolver: ResolutionResolver,
 	stageSizeConfines: Confines<Axial<Int>>,
-	backgroundColor: Int = 0x888888
+	color: Int = 0x999999
 ) : DisplaySystem {
 	
 	private val _stage = StageImpl(this, stageSizeConfines)
 	
 	override val stage: Stage get() = _stage
-	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver, backgroundColor)
+	override val renderer: DisplayRenderer = DisplayRendererImpl(stageSizeConfines.min, resolutionResolver, color)
 	
 	init {
 		time.onEachFrame { render() }
@@ -47,20 +47,23 @@ class DisplaySystemImpl(
 		
 		if (size.x <= outerSize.x && size.y <= outerSize.y && size.x >= innerSize.x && size.y >= innerSize.y) {
 			stageSize.set(size)
-		} else {
+		}
+		else {
 			
 			if (size.isOutside(innerSize) && size.isInsideAtLeastOne(outerSize)) {
 				val axis = if (size.x <= outerSize.x) Axis.X else Axis.Y
 				stageSize[axis] = size[axis]
 				stageSize[axis.opposite] = outerSize[axis.opposite]
-			} else {
+			}
+			else {
 				val inscribeAxis: Axis
 				
 				val inside = size.isInside(innerSize) || size.isInsideAtLeastOne(innerSize)
 				if (inside) {
 					inscribeAxis = if (sizeRatio > innerRatio) Axis.Y else Axis.X
 					stageSize[inscribeAxis] = innerSize[inscribeAxis]
-				} else {
+				}
+				else {
 					inscribeAxis = if (sizeRatio > outerRatio) Axis.Y else Axis.X
 					stageSize.set(outerSize)
 				}
