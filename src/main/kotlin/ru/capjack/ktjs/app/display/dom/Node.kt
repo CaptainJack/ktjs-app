@@ -89,9 +89,12 @@ abstract class Node : Destroyable {
 	
 	init {
 		_position.onChange(::applyPositionRule)
-		_coordinate.onChange {
-			display.position.set { _coordinate[it] + padding.leftTop[it] }
-		}
+		_coordinate.onChange(::assignDisplayPosition)
+	}
+	
+	private fun assignDisplayPosition() {
+		val offset = padding.leftTop
+		display.position.set { _coordinate[it] + offset[it] }
 	}
 	
 	fun showDebugBackground(color: Int = 0xFF0000) {
@@ -103,8 +106,8 @@ abstract class Node : Destroyable {
 				.drawRect(
 					-padding.left,
 					-padding.top,
-					size.x + padding.size.x,
-					size.y + padding.size.y
+					size.x,
+					size.y
 				)
 				.endFill()
 		}
@@ -161,8 +164,8 @@ abstract class Node : Destroyable {
 	protected open fun processRemovedFromStage() {}
 	
 	protected open fun processChangePadding() {
-		bindSizeRuleInside()
-		bindSizeRuleOutsize()
+		assignDisplayPosition()
+		tryApplySizeRuleInside()
 	}
 	
 	internal fun callProcessAddedToStage() {
@@ -217,7 +220,7 @@ abstract class Node : Destroyable {
 	}
 	
 	private fun applyPositionRule() {
-		positionRule.apply(coordinate, position, container?.size ?: AxialInstances.INT_0, size)
+		positionRule.apply(coordinate, position, container?.innerSize ?: AxialInstances.INT_0, size)
 	}
 	
 	private fun applySizeRuleInside() {
@@ -231,7 +234,13 @@ abstract class Node : Destroyable {
 	
 	private fun applySizeRuleOutside() {
 		container?.also {
-			sizeRule.apply(size, it.size, SpaceType.OUTSIDE)
+			sizeRule.apply(size, it.innerSize, SpaceType.OUTSIDE)
+		}
+	}
+	
+	private fun tryApplySizeRuleInside() {
+		if (sizeRule.isApplicable(SpaceType.INSIDE)) {
+			applySizeRuleInside()
 		}
 	}
 	
