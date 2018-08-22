@@ -39,9 +39,11 @@ class ImageLoader(
 		val texture =
 			if (fileName.extension == "svg") {
 				createSvgTexture()
-			} else if (fileName.extension == "jpg" && (fileName.base.endsWith(".ah") || fileName.base.endsWith(".av"))) {
+			}
+			else if (fileName.extension == "jpg" && (fileName.base.endsWith(".ah") || fileName.base.endsWith(".av"))) {
 				createJpgaTexture()
-			} else {
+			}
+			else {
 				BaseTexture(image, resolution = settings.imageResolution)
 			}
 		
@@ -50,17 +52,12 @@ class ImageLoader(
 	
 	private fun createSvgTexture(): BaseTexture {
 		val canvas = document.createElement("canvas") as HTMLCanvasElement
-		val width = image.naturalWidth
-		val height = image.naturalHeight
 		
-		canvas.width = width * settings.imageResolution
-		canvas.height = height * settings.imageResolution
+		canvas.width = image.naturalWidth * settings.imageResolution
+		canvas.height = image.naturalHeight * settings.imageResolution
 		
-		(canvas.getContext("2d") as CanvasRenderingContext2D).drawImage(
-			image,
-			0.0, 0.0, width.toDouble(), height.toDouble(),
-			0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble()
-		)
+		(canvas.getContext("2d") as CanvasRenderingContext2D)
+			.drawImage(image, 0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
 		
 		return BaseTexture(canvas, resolution = settings.imageResolution)
 	}

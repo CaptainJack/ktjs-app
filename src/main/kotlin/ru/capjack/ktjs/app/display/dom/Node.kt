@@ -14,9 +14,11 @@ import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.common.geom.*
+import ru.capjack.ktjs.wrapper.pixi.Filter
 import ru.capjack.ktjs.wrapper.pixi.Graphics
 import ru.capjack.ktjs.wrapper.pixi.filters.AlphaFilter
 import ru.capjack.ktjs.wrapper.pixi.set
+import kotlin.reflect.KClass
 
 abstract class Node : Destroyable {
 	val coordinate: Dimension
@@ -159,7 +161,9 @@ abstract class Node : Destroyable {
 		}
 	}
 	
-	protected open fun processAddedToStage() {}
+	protected open fun processAddedToStage() {
+		fixFilters()
+	}
 	
 	protected open fun processRemovedFromStage() {}
 	
@@ -246,17 +250,66 @@ abstract class Node : Destroyable {
 	
 	private fun processChangeAlpha(value: Double) {
 		if (value == 1.0) {
-			alphaFilter = null
-			display.filters = emptyArray()
+			alphaFilter?.also {
+				removeFilter(it)
+				alphaFilter = null
+			}
 		}
 		else {
 			if (alphaFilter == null) {
 				alphaFilter = AlphaFilter(value)
-				display.filters = arrayOf(alphaFilter!!)
+				addFilter(alphaFilter!!)
 			}
 			else {
 				alphaFilter!!.alpha = value
 			}
+		}
+	}
+	
+	fun addFilter(filter: Filter) {
+		if (display.filters?.contains(filter) == true) {
+			return
+		}
+		fixFilter(filter)
+		display.filters = display.filters?.plus(filter) ?: arrayOf(filter)
+	}
+	
+	fun removeFilter(filter: Filter) {
+		display.filters?.also { filters ->
+			display.filters = if (filters.size == 1 && filters[0] == filter) {
+				null
+			}
+			else {
+				filters.filterNot { it == filter }.toTypedArray()
+			}
+		}
+	}
+	
+	fun removeFilter(type: KClass<out Filter>) {
+		display.filters?.also { filters ->
+			val list = filters.filter { type.isInstance(it) }
+			display.filters = if (list.isEmpty()) null else list.toTypedArray()
+		}
+	}
+	
+	fun clearFilters() {
+		display.filters = null
+	}
+	
+	private fun fixFilter(filter: Filter) {
+		stage?.also { filter.resolution = it.displaySystem.renderer.resolution }
+	}
+	
+	private fun fixFilters() {
+		val filters = display.filters
+			?: return
+		
+		@Suppress("ReplaceSingleLineLet")
+		val r = stage?.let { it.displaySystem.renderer.resolution }
+			?: return
+		
+		for (filter in filters) {
+			filter.resolution = r
 		}
 	}
 }
