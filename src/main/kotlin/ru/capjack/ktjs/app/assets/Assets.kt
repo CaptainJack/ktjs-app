@@ -9,6 +9,8 @@ import ru.capjack.ktjs.wrapper.pixi.Texture
 interface Assets : Destroyable {
 	fun getImageAsset(name: String): ImageAsset
 	
+	fun getSvgAsset(name: String): SvgAsset
+	
 	fun getAtlasAsset(name: String): ImageAtlasAsset
 	
 	fun getSoundAsset(name: String): SoundAsset
@@ -22,6 +24,8 @@ interface Assets : Destroyable {
 	fun getTexture(name: String): Texture
 	
 	fun getTexture(atlasName: String, frameName: String): Texture
+	
+	fun getSvgTexture(name: String, width: Int, height: Int): Texture
 	
 	fun getSound(name: String): Sound
 	

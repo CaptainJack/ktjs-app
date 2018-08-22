@@ -20,6 +20,7 @@ internal class AssetsProducerImpl(
 	
 	private var fonts: MutableList<FontFace> = mutableListOf()
 	private var imageMakers: MutableMap<String, ImageAssetMaker> = mutableMapOf()
+	private var svgMakers: MutableMap<String, SvgAssetMaker> = mutableMapOf()
 	private var imageAtlasMakers: MutableMap<String, ImageAtlasAssetMaker> = mutableMapOf()
 	private var soundMakers: MutableMap<String, SoundAssetMaker> = mutableMapOf()
 	private var xmlMakers: MutableMap<String, XmlAssetMaker> = mutableMapOf()
@@ -41,6 +42,12 @@ internal class AssetsProducerImpl(
 	override fun addImage(name: String, path: FilePath): ImageAsset {
 		return add(imageMakers, name, convertImagePath(path)) {
 			ImageAssetMaker(it, renderer, settings)
+		}
+	}
+	
+	override fun addSvg(name: String, path: FilePath): SvgAsset {
+		return add(svgMakers, name, path) {
+			SvgAssetMaker(it, settings)
 		}
 	}
 	
@@ -89,6 +96,7 @@ internal class AssetsProducerImpl(
 		val loaders: MutableList<ProgressRunner> = mutableListOf()
 		
 		loaders.addAll(imageMakers.values)
+		loaders.addAll(svgMakers.values)
 		loaders.addAll(imageAtlasMakers.values)
 		loaders.addAll(soundMakers.values)
 		loaders.addAll(xmlMakers.values)
@@ -99,12 +107,14 @@ internal class AssetsProducerImpl(
 			loaders.add(FontsLoader(fontsBaseUrl, fonts))
 		}
 		
-		return CompositeProgressRunner(loaders).run()
+		val progress = CompositeProgressRunner(loaders).run()
+		return progress
 	}
 	
 	override fun load(receiver: (Assets) -> Unit): Progress {
 		val collection = AssetsImpl(
 			imageMakers.mapValues { it.value.asset },
+			svgMakers.mapValues { it.value.asset },
 			imageAtlasMakers.mapValues { it.value.asset },
 			soundMakers.mapValues { it.value.asset },
 			xmlMakers.mapValues { it.value.asset },

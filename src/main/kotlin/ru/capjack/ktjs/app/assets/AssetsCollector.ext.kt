@@ -11,6 +11,10 @@ fun AssetsCollector.addImage(name: String, path: String): ImageAsset {
 	return addImage(name, FilePaths.get(path))
 }
 
+fun AssetsCollector.addSvg(name: String, path: String): SvgAsset {
+	return addSvg(name, FilePaths.get(path))
+}
+
 fun AssetsCollector.addImages(vararg names: String) {
 	names.forEach { addImage(it) }
 }

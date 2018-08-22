@@ -11,6 +11,10 @@ internal class DirectoryAssetsCollector(
 		return target.addImage(dir.valueAsDirectory + name, dir.resolve(path))
 	}
 	
+	override fun addSvg(name: String, path: FilePath): SvgAsset {
+		return target.addSvg(dir.valueAsDirectory + name, dir.resolve(path))
+	}
+	
 	override fun addImageAtlas(name: String, path: FilePath): ImageAtlasAsset {
 		return target.addImageAtlas(dir.valueAsDirectory + name, dir.resolve(path))
 	}

@@ -2,6 +2,7 @@ package ru.capjack.ktjs.app.assets
 
 internal class AssetsImpl(
 	private val images: Map<String, ImageAssetImpl>,
+	private val sgvs: Map<String, SvgAssetImpl>,
 	private val imageAtlases: Map<String, ImageAtlasAssetImpl>,
 	private val sounds: Map<String, SoundAssetImpl>,
 	private val xmls: Map<String, XmlAssetImpl>,
@@ -10,6 +11,8 @@ internal class AssetsImpl(
 ) : Assets {
 	
 	override fun getImageAsset(name: String): ImageAsset = fetchAsset(images, name)
+	
+	override fun getSvgAsset(name: String): SvgAsset = fetchAsset(sgvs, name)
 	
 	override fun getAtlasAsset(name: String): ImageAtlasAsset = fetchAsset(imageAtlases, name)
 	
@@ -24,6 +27,8 @@ internal class AssetsImpl(
 	override fun getTexture(name: String) = getImageAsset(name).texture
 	
 	override fun getTexture(atlasName: String, frameName: String) = getAtlasAsset(atlasName)[frameName]
+	
+	override fun getSvgTexture(name: String, width: Int, height: Int) = getSvgAsset(name).getTexture(width, height)
 	
 	override fun getSound(name: String) = getSoundAsset(name).sound
 	

@@ -9,6 +9,8 @@ interface AssetsCollector {
 	
 	fun addImage(name: String, path: FilePath = FilePaths.get(name)): ImageAsset
 	
+	fun addSvg(name: String, path: FilePath = FilePaths.get(name)): SvgAsset
+	
 	fun addImageAtlas(name: String, path: FilePath = FilePaths.get(name)): ImageAtlasAsset
 	
 	fun addSound(name: String, path: FilePath = FilePaths.get(name)): SoundAsset
