@@ -12,6 +12,10 @@ class DefaultAssetsSystem(
 	private val fonts: FontFaceRegistry = mutableMapOf()
 	
 	override fun createProducer(baseUrl: Url): AssetsProducer {
+		return createProducer(baseUrl, settings)
+	}
+	
+	override fun createProducer(baseUrl: Url, settings: AssetsSettings): AssetsProducer {
 		return AssetsProducerImpl(renderer, settings, baseUrl, fontsBaseUrl, fonts)
 	}
 }
