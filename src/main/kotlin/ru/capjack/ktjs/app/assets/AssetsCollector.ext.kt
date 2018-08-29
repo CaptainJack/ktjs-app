@@ -3,8 +3,12 @@ package ru.capjack.ktjs.app.assets
 import ru.capjack.ktjs.app.assets.font.FontFace
 import ru.capjack.ktjs.common.rl.FilePaths
 
-fun AssetsCollector.inDirectory(dir: String): AssetsCollector {
-	return DirectoryAssetsCollector(this, FilePaths.get(dir))
+fun AssetsCollector.dir(path: String): AssetsCollector {
+	return DirectoryAssetsCollector(this, FilePaths.get(path))
+}
+
+fun AssetsCollector.dir(path: String, block: AssetsCollector.() -> Unit) {
+	dir(path).block()
 }
 
 fun AssetsCollector.addImage(name: String, path: String): ImageAsset {
