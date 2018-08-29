@@ -19,9 +19,14 @@ class Color private constructor(val argb: Int) {
 	val css: String by lazy {
 		if (alpha == 0xFF) {
 			"#" + (rgb.asDynamic().toString(16) as String).padStart(6, '0')
-		} else {
+		}
+		else {
 			"rgba($red, $green, $blue, $alphaStrength)"
 		}
+	}
+	
+	fun transform(alphaStrength: Double): Color {
+		return Color(rgb, alphaStrength)
 	}
 	
 	private fun segment(index: Int): Int {
