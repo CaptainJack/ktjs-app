@@ -13,6 +13,7 @@ import ru.capjack.ktjs.wrapper.pixi.Container
 import ru.capjack.ktjs.wrapper.pixi.Rectangle
 import ru.capjack.ktjs.wrapper.pixi.RenderTexture
 import ru.capjack.ktjs.wrapper.pixi.Sprite
+import ru.capjack.ktjs.wrapper.pixi.SystemRenderer
 import ru.capjack.ktjs.wrapper.pixi.Texture
 import ru.capjack.ktjs.wrapper.pixi.autoDetectRenderer
 import kotlin.browser.document
@@ -91,20 +92,21 @@ class ImageLoader(
 			texture.destroy(false)
 		}
 		else {
-			val r = autoDetectRenderer(jso {
-				width = frameWidth
-				height = frameHeight
-				resolution = settings.imageResolution.toDouble()
-				antialias = true
-				transparent = true
-			})
+			val r = customRenderers.getOrPut(settings.imageResolution) {
+				autoDetectRenderer(jso {
+					width = frameWidth
+					height = frameHeight
+					resolution = settings.imageResolution.toDouble()
+					antialias = true
+					transparent = true
+				})
+			}
 			
+			r.resize(frameWidth, frameHeight)
 			r.render(container)
 			
 			val img = js("new Image()").unsafeCast<HTMLImageElement>()
 			img.src = r.view.toDataURL()
-			
-			r.destroy(true)
 			
 			result = BaseTexture(img, resolution = settings.imageResolution)
 		}
@@ -124,5 +126,9 @@ class ImageLoader(
 	private fun releaseImage() {
 		image.onload = null
 		image.onerror = null
+	}
+	
+	companion object {
+		val customRenderers = mutableMapOf<Int, SystemRenderer>()
 	}
 }

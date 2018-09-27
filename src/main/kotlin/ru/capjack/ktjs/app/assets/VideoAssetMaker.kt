@@ -35,7 +35,7 @@ internal class VideoAssetMaker(url: Url) : AbstractAssetMaker<VideoAssetImpl>(Vi
 	@Suppress("UNUSED_PARAMETER")
 	private fun processOnError(message: dynamic, source: String, line: Int, col: Int, error: Any?) {
 		releaseVideo()
-		throw RuntimeException("Failed to load video \"$url\" ($message)")
+		throw RuntimeException("Failed to load video \"$url\" ($message, $error)")
 	}
 	
 	private fun releaseVideo() {

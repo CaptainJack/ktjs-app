@@ -42,6 +42,24 @@ internal class AssetsImpl(
 		for (asset in images.values) {
 			asset.destroy()
 		}
+		for (asset in sgvs.values) {
+			asset.destroy()
+		}
+		for (asset in imageAtlases.values) {
+			asset.destroy()
+		}
+		for (asset in sounds.values) {
+			asset.destroy()
+		}
+		for (asset in xmls.values) {
+			asset.destroy()
+		}
+		for (asset in videos.values) {
+			asset.destroy()
+		}
+		for (asset in jsons.values) {
+			asset.destroy()
+		}
 	}
 	
 	private fun <A : Asset> fetchAsset(map: Map<String, A>, name: String): A {

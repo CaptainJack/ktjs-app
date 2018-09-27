@@ -21,6 +21,7 @@ internal class VideoAssetImpl : AbstractAsset(), VideoAsset {
 			pause()
 			src = ""
 			load()
+			remove()
 		}
 		_video = null
 	}
