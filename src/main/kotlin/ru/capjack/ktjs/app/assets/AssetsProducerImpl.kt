@@ -53,7 +53,7 @@ internal class AssetsProducerImpl(
 	
 	override fun addImageAtlas(name: String, path: FilePath): ImageAtlasAsset {
 		return add(imageAtlasMakers, name, path) {
-			ImageAtlasAssetMaker(it, renderer, settings)
+			ImageAtlasAssetMaker(it, renderer, settings, ::convertImagePath)
 		}
 	}
 	

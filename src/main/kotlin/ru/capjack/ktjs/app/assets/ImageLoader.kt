@@ -5,6 +5,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLImageElement
 import org.w3c.dom.events.Event
 import ru.capjack.ktjs.app.display.DisplayRenderer
+import ru.capjack.ktjs.common.js.jso
 import ru.capjack.ktjs.common.rl.Url
 import ru.capjack.ktjs.wrapper.pixi.BaseRenderTexture
 import ru.capjack.ktjs.wrapper.pixi.BaseTexture
@@ -13,6 +14,7 @@ import ru.capjack.ktjs.wrapper.pixi.Rectangle
 import ru.capjack.ktjs.wrapper.pixi.RenderTexture
 import ru.capjack.ktjs.wrapper.pixi.Sprite
 import ru.capjack.ktjs.wrapper.pixi.Texture
+import ru.capjack.ktjs.wrapper.pixi.autoDetectRenderer
 import kotlin.browser.document
 
 class ImageLoader(
@@ -40,7 +42,7 @@ class ImageLoader(
 			if (fileName.extension == "svg") {
 				createSvgTexture()
 			}
-			else if (fileName.extension == "jpg" && (fileName.base.endsWith(".ah") || fileName.base.endsWith(".av"))) {
+			else if (fileName.extension == "jpg" && fileName.base.substringBeforeLast('@').run { endsWith(".ah") || endsWith(".av") }) {
 				createJpgaTexture()
 			}
 			else {
@@ -63,31 +65,54 @@ class ImageLoader(
 	}
 	
 	private fun createJpgaTexture(): BaseTexture {
-		val h = url.path.name.base.endsWith(".ah")
+		val h = url.path.name.base.substringBeforeLast('@').endsWith(".ah")
 		
-		val width = image.naturalWidth.toDouble() / settings.imageResolution
-		val height = image.naturalHeight.toDouble() / settings.imageResolution
-		val frameWidth = if (h) width / 2 else width
-		val frameHeight = if (h) height else height / 2
+		val sourceWidth = image.naturalWidth / settings.imageResolution
+		val sourceHeight = image.naturalHeight / settings.imageResolution
+		val frameWidth = if (h) sourceWidth / 2 else sourceWidth
+		val frameHeight = if (h) sourceHeight else sourceHeight / 2
 		
-		val sourceTextureBase = BaseTexture(image, resolution = settings.imageResolution)
-		val renderedTextureBase = BaseRenderTexture(frameWidth, frameHeight, resolution = settings.imageResolution)
-		val renderedTexture = RenderTexture(renderedTextureBase)
+		val source = BaseTexture(image, resolution = settings.imageResolution)
 		
 		val container = Container()
-		val sprite = Sprite(Texture(sourceTextureBase, Rectangle(0, 0, frameWidth, frameHeight)))
-		val mask = Sprite(Texture(sourceTextureBase, Rectangle(if (h) frameWidth else 0, if (h) 0 else frameHeight, frameWidth, frameHeight)))
+		val spriteImage = Sprite(Texture(source, Rectangle(0, 0, frameWidth, frameHeight)))
+		val spriteMask = Sprite(Texture(source, Rectangle(if (h) frameWidth else 0, if (h) 0 else frameHeight, frameWidth, frameHeight)))
 		
-		container.addChild(sprite)
-		container.addChild(mask)
-		sprite.mask = mask
+		container.addChild(spriteImage)
+		container.addChild(spriteMask)
+		spriteImage.mask = spriteMask
 		
-		renderer.render(container, renderedTexture)
+		val result: BaseTexture
+		
+		if (renderer.bitmapImageResolution == settings.imageResolution) {
+			result = BaseRenderTexture(frameWidth, frameHeight, resolution = settings.imageResolution)
+			val texture = RenderTexture(result)
+			renderer.render(container, texture)
+			texture.destroy(false)
+		}
+		else {
+			val r = autoDetectRenderer(jso {
+				width = frameWidth
+				height = frameHeight
+				resolution = settings.imageResolution.toDouble()
+				antialias = true
+				transparent = true
+			})
+			
+			r.render(container)
+			
+			val img = js("new Image()").unsafeCast<HTMLImageElement>()
+			img.src = r.view.toDataURL()
+			
+			r.destroy(true)
+			
+			result = BaseTexture(img, resolution = settings.imageResolution)
+		}
 		
 		container.destroy(true)
-		renderedTexture.destroy(false)
+		source.destroy()
 		
-		return renderedTextureBase
+		return result
 	}
 	
 	@Suppress("UNUSED_PARAMETER")

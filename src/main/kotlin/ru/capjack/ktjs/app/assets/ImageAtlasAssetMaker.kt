@@ -1,6 +1,8 @@
 package ru.capjack.ktjs.app.assets
 
 import ru.capjack.ktjs.app.display.DisplayRenderer
+import ru.capjack.ktjs.common.rl.FilePath
+import ru.capjack.ktjs.common.rl.FilePaths
 import ru.capjack.ktjs.common.rl.Url
 import ru.capjack.ktjs.wrapper.pixi.BaseTexture
 import ru.capjack.ktjs.wrapper.pixi.Rectangle
@@ -10,7 +12,9 @@ import ru.capjack.ktjs.wrapper.pixi.pixi
 internal class ImageAtlasAssetMaker(
 	url: Url,
 	private val renderer: DisplayRenderer,
-	private val settings: AssetsSettings
+	private val settings: AssetsSettings,
+	private val convertImagePath: (FilePath) -> FilePath
+
 ) : AbstractAssetMaker<ImageAtlasAssetImpl>(ImageAtlasAssetImpl(), url) {
 	private lateinit var data: ImageAtlasData
 	
@@ -31,7 +35,7 @@ internal class ImageAtlasAssetMaker(
 	}
 	
 	private fun loadImage(path: String) {
-		val url = url.resolvePathSibling(path)
+		val url = url.resolvePathSibling(convertImagePath(FilePaths.get(path)).value)
 		ImageLoader(url, renderer, settings, ::receiveImage)
 	}
 	
