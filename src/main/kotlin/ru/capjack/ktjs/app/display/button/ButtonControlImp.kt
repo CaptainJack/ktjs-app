@@ -10,7 +10,7 @@ import ru.capjack.ktjs.wrapper.pixi.Container
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 
 
-class ButtonControlImp(target: DisplayObject? = null) : ButtonControl, Destroyable {
+class ButtonControlImp() : ButtonControl, Destroyable {
 	
 	private var target: DisplayObject? = null
 	
@@ -33,8 +33,8 @@ class ButtonControlImp(target: DisplayObject? = null) : ButtonControl, Destroyab
 	private var pointerFocus: Boolean = false
 	private var pointerActive: Boolean = false
 	
-	init {
-		this.target = target
+	constructor(target: DisplayObject) : this() {
+		setTarget(target)
 	}
 	
 	override fun setTarget(value: DisplayObject?) {
