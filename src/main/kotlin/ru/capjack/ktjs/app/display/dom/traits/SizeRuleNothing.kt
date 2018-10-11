@@ -4,7 +4,7 @@ import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.geom.Axis
 import ru.capjack.ktjs.common.geom.MutableAxial
 
-class SizeRuleNothing : SizeRule, DimensionRuleNothing() {
+open class SizeRuleNothing : SizeRule, DimensionRuleNothing() {
 	override fun apply(target: MutableAxial<Int>, space: Axial<Int>, type: SpaceType) {}
 	
 	override fun apply(target: MutableAxial<Int>, space: Axial<Int>, type: SpaceType, axis: Axis) {}

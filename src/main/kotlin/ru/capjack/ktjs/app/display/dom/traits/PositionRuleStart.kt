@@ -3,7 +3,7 @@ package ru.capjack.ktjs.app.display.dom.traits
 import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.geom.Axis
 
-class PositionRuleStart : PositionRuleCalculable() {
+open class PositionRuleStart : PositionRuleCalculable() {
 	
 	override fun isApplicable(type: SpaceType): Boolean = false
 	

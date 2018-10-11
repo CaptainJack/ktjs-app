@@ -16,7 +16,7 @@ class DisplaySystemImpl(
 	time: TimeSystem,
 	resolutionResolver: ResolutionResolver,
 	stageSizeConfines: Confines<Axial<Int>>,
-	color: Int = 0x999999
+	color: Int? = null
 ) : DisplaySystem {
 	
 	private val _stage = StageImpl(this, stageSizeConfines)
