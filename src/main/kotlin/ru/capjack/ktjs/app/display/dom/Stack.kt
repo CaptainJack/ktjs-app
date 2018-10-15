@@ -12,12 +12,32 @@ class Stack(
 	private val align: PositionRule = PositionRules.NOTHING
 ) : Container() {
 	
+	private var skipPlace: Boolean = false
+	
+	init {
+		size.onChange(::placeNodes)
+	}
+	
+	override fun isAllowsChildrenSizeOutside(axis: Axis): Boolean {
+		return axis != this.axis
+	}
+	
 	override fun processChangeNodes() {
 		placeNodes()
 		super.processChangeNodes()
 	}
 	
+	override fun updateContentSize() {
+		skipPlace = true
+		super.updateContentSize()
+		skipPlace = false
+	}
+	
 	private fun placeNodes() {
+		if (skipPlace) {
+			return
+		}
+		
 		var offset = 0
 		
 		val oppositeAxis = axis.opposite
@@ -29,6 +49,28 @@ class Stack(
 		}
 		else {
 			space[oppositeAxis] = size[oppositeAxis]
+		}
+		
+		space[axis] = size[axis]
+		
+		val nodesForOutsideSize = mutableListOf<Node>()
+		
+		for (node in nodes) {
+			if (node.sizeRule.isApplicable(SpaceType.OUTSIDE, axis)) {
+				nodesForOutsideSize.add(node)
+			}
+			else {
+				space[axis] -= node.size[axis]
+			}
+		}
+		
+		space[axis] = space[axis].coerceAtLeast(0)
+		
+		if (nodesForOutsideSize.isNotEmpty()) {
+			val oneOutsideSize = space[axis] / nodesForOutsideSize.size
+			for (node in nodesForOutsideSize) {
+				node.size[axis] = oneOutsideSize
+			}
 		}
 		
 		for (node in nodes) {

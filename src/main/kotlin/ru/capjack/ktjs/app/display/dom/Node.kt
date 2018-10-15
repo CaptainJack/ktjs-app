@@ -237,8 +237,18 @@ abstract class Node : Destroyable {
 	}
 	
 	private fun applySizeRuleOutside() {
-		container?.also {
-			sizeRule.apply(size, it.innerSize, SpaceType.OUTSIDE)
+		container?.also { con: Container ->
+			val ax = con.isAllowsChildrenSizeOutside(Axis.X)
+			val ay = con.isAllowsChildrenSizeOutside(Axis.Y)
+			if (ax && ay) {
+				sizeRule.apply(size, con.innerSize, SpaceType.OUTSIDE)
+			}
+			else if (ax) {
+				sizeRule.apply(size, con.innerSize, SpaceType.OUTSIDE, Axis.X)
+			}
+			else if (ay) {
+				sizeRule.apply(size, con.innerSize, SpaceType.OUTSIDE, Axis.Y)
+			}
 		}
 	}
 	

@@ -133,4 +133,8 @@ open class Container : Node(), NodeList {
 		}
 		return false
 	}
+	
+	internal open fun isAllowsChildrenSizeOutside(axis: Axis): Boolean {
+		return true
+	}
 }

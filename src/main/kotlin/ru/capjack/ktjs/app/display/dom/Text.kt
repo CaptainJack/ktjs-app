@@ -3,7 +3,7 @@ package ru.capjack.ktjs.app.display.dom
 import ru.capjack.ktjs.app.display.misc.TextStyle
 import ru.capjack.ktjs.wrapper.pixi.Text as PixiText
 
-class Text(
+open class Text(
 	style: TextStyle,
 	value: String = ""
 

@@ -25,6 +25,8 @@ interface Assets : Destroyable {
 	
 	fun getTexture(atlasName: String, frameName: String): Texture
 	
+	fun getSvgTexture(name: String): Texture
+	
 	fun getSvgTexture(name: String, width: Int, height: Int): Texture
 	
 	fun getSound(name: String): Sound

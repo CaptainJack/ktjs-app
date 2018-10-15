@@ -28,6 +28,8 @@ internal class AssetsImpl(
 	
 	override fun getTexture(atlasName: String, frameName: String) = getAtlasAsset(atlasName)[frameName]
 	
+	override fun getSvgTexture(name: String) = getSvgAsset(name).texture
+	
 	override fun getSvgTexture(name: String, width: Int, height: Int) = getSvgAsset(name).getTexture(width, height)
 	
 	override fun getSound(name: String) = getSoundAsset(name).sound
