@@ -276,6 +276,14 @@ abstract class Node : Destroyable {
 		}
 	}
 	
+	fun setFilter(filter: Filter) {
+		if (display.filters?.contains(filter) == true) {
+			return
+		}
+		fixFilter(filter)
+		display.filters = arrayOf(filter)
+	}
+	
 	fun addFilter(filter: Filter) {
 		if (display.filters?.contains(filter) == true) {
 			return
@@ -300,6 +308,10 @@ abstract class Node : Destroyable {
 			val list = filters.filter { type.isInstance(it) }
 			display.filters = if (list.isEmpty()) null else list.toTypedArray()
 		}
+	}
+	
+	fun removeAllFilters() {
+		display.filters = null
 	}
 	
 	fun clearFilters() {
