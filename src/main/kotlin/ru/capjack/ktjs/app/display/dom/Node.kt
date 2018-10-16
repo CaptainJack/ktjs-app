@@ -90,7 +90,7 @@ abstract class Node : Destroyable {
 		}
 	
 	init {
-		_position.onChange(::applyPositionRule)
+		_position.onChange(::applyPositionRuleAuto)
 		_coordinate.onChange(::assignDisplayPosition)
 	}
 	
@@ -136,13 +136,13 @@ abstract class Node : Destroyable {
 	}
 	
 	protected open fun processChangeContainer() {
-		applyPositionRule()
+		applyPositionRuleAuto()
 		processChangePositionRule()
 		processChangeSizeRule()
 	}
 	
 	protected open fun processChangePositionRule() {
-		applyPositionRule()
+		applyPositionRuleAuto()
 		bindPositionRuleInside()
 		bindPositionRuleOutsize()
 	}
@@ -191,7 +191,7 @@ abstract class Node : Destroyable {
 		positionRuleBindingInside.cancel()
 		container?.also {
 			positionRuleBindingInside = bindRule(positionRule, SpaceType.INSIDE) {
-				size.onChange(::applyPositionRule)
+				size.onChange(::applyPositionRuleAuto)
 			}
 		}
 	}
@@ -200,7 +200,7 @@ abstract class Node : Destroyable {
 		positionRuleBindingOutside.cancel()
 		container?.also {
 			positionRuleBindingOutside = bindRule(positionRule, SpaceType.OUTSIDE) {
-				it.size.onChange(::applyPositionRule)
+				it.size.onChange(::applyPositionRuleAuto)
 			}
 		}
 	}
@@ -223,7 +223,7 @@ abstract class Node : Destroyable {
 		}
 	}
 	
-	private fun applyPositionRule() {
+	private fun applyPositionRuleAuto() {
 		positionRule.apply(coordinate, position, container?.innerSize ?: AxialInstances.INT_0, size)
 	}
 	

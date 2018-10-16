@@ -7,7 +7,7 @@ abstract class Tail(protected val deformable: Boolean) : Node() {
 	
 	init {
 		if (deformable) {
-			size.onChange { display.setSize(innerSize) }
+			size.onChange { -> display.setSize(innerSize) }
 		}
 		sizeRule = SizeRules.STRETCHING
 	}

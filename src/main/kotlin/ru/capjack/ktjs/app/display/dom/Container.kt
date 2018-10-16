@@ -14,6 +14,17 @@ open class Container : Node(), NodeList {
 	private val _nodes: MutableList<Node> = mutableListOf()
 	private val updateContentSizeRef = ::updateContentSize
 	
+	fun destroyAllNodes() {
+		val nodes = _nodes.toTypedArray()
+		removeAllNodes()
+		nodes.forEach(Node::destroy)
+	}
+	
+	override fun destroy() {
+		destroyAllNodes()
+		super.destroy()
+	}
+	
 	override fun getNode(index: Int): Node {
 		return _nodes.elementAt(index)
 	}
