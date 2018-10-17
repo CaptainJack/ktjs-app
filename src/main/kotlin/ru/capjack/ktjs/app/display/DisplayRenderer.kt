@@ -11,7 +11,7 @@ interface DisplayRenderer {
 	val resolution: Double
 	val bitmapImageResolution: Int
 	
-	fun resize(size: Axial<Int>)
+	fun locate(position: Axial<Int>, size: Axial<Int>)
 	
 	fun render(display: DisplayObject)
 	

@@ -112,28 +112,29 @@ internal class AssetsProducerImpl(
 	}
 	
 	override fun load(receiver: (Assets) -> Unit): Progress {
-		val collection = AssetsImpl(
-			imageMakers.mapValues { it.value.asset },
-			svgMakers.mapValues { it.value.asset },
-			imageAtlasMakers.mapValues { it.value.asset },
-			soundMakers.mapValues { it.value.asset },
-			xmlMakers.mapValues { it.value.asset },
-			videoMakers.mapValues { it.value.asset },
-			jsonMakers.mapValues { it.value.asset }
-		)
+		
+		val map = AssetsMap()
+		
+		imageMakers.forEach { map.add(AssetKind.Image, it.key, it.value.asset) }
+		svgMakers.forEach { map.add(AssetKind.Svg, it.key, it.value.asset) }
+		imageAtlasMakers.forEach { map.add(AssetKind.ImageAtlas, it.key, it.value.asset) }
+		soundMakers.forEach { map.add(AssetKind.Sound, it.key, it.value.asset) }
+		xmlMakers.forEach { map.add(AssetKind.Xml, it.key, it.value.asset) }
+		videoMakers.forEach { map.add(AssetKind.Video, it.key, it.value.asset) }
+		jsonMakers.forEach { map.add(AssetKind.Json, it.key, it.value.asset) }
+		
+		val collection = AssetsImpl(map)
 		val progress = load()
 		progress.onComplete { receiver(collection) }
 		return progress
 	}
 	
 	private fun convertImagePath(path: FilePath): FilePath {
-		return when {
-			!path.isFileExtension("svg")
-				&& settings.bitmapResolutionResolveSuffix
-				&& settings.imageResolution != 1
-			-> path.resolveSibling("${path.name.base}@${settings.imageResolution}x${path.name.extensionAsSuffix}")
-			else -> path
-		}
+		return if (!path.isFileExtension("svg")
+			&& settings.bitmapResolutionResolveSuffix
+			&& settings.imageResolution != 1
+		) path.resolveSibling("${path.name.base}@${settings.imageResolution}x${path.name.extensionAsSuffix}")
+		else path
 	}
 }
 

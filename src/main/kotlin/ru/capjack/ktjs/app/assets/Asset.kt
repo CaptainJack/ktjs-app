@@ -1,5 +1,7 @@
 package ru.capjack.ktjs.app.assets
 
-interface Asset {
+import ru.capjack.ktjs.common.Destroyable
+
+interface Asset : Destroyable {
 	val loaded: Boolean
 }

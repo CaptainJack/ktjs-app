@@ -20,7 +20,7 @@ internal abstract class AbstractAsset : Asset {
 		loaded = true
 	}
 	
-	fun destroy() {
+	override fun destroy() {
 		if (loaded && !destroyed) {
 			doDestroy()
 		}

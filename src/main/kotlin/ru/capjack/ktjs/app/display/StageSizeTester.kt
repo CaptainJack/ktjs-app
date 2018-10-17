@@ -2,8 +2,9 @@ package ru.capjack.ktjs.app.display
 
 import ru.capjack.ktjs.app.display.dom.Graphics
 import ru.capjack.ktjs.app.display.dom.traits.SizeRules
+import ru.capjack.ktjs.common.geom.Axial
 
-internal class StageSizeTester : Graphics() {
+internal class StageSizeTester(private val minSize: Axial<Int>) : Graphics() {
 	init {
 		sizeRule = SizeRules.FILLING
 		size.onChange(::update)
@@ -25,7 +26,7 @@ internal class StageSizeTester : Graphics() {
 			val innerCornerColor = 0x339933
 			
 			val outer = stage.size
-			val inner = stage.sizeConfines.min
+			val inner = minSize
 			
 			val x = (outer.x - inner.x) / 2
 			val y = (outer.y - inner.y) / 2

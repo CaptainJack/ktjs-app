@@ -13,7 +13,7 @@ import ru.capjack.ktjs.wrapper.pixi.utils.skipHello
 import kotlin.browser.document
 import kotlin.browser.window
 
-class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolver, color: Int?) : DisplayRenderer {
+class DisplayRendererImpl(resolutionResolver: ResolutionResolver, color: Int?) : DisplayRenderer {
 	
 	override val canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement
 	override val pixelRatio: Double = window.devicePixelRatio.replaceIf({ !it.isFinite() }, 1.0)
@@ -22,8 +22,6 @@ class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolv
 	
 	private var pixiRenderer: SystemRenderer = autoDetectRenderer(jso {
 		skipHello()
-		width = size.x
-		height = size.y
 		resolution = this@DisplayRendererImpl.resolution
 		antialias = true
 		view = canvas
@@ -35,10 +33,14 @@ class DisplayRendererImpl(size: Axial<Int>, resolutionResolver: ResolutionResolv
 		}
 	})
 	
-	override fun resize(size: Axial<Int>) {
+	override fun locate(position: Axial<Int>, size: Axial<Int>) {
 		pixiRenderer.resize(size.x, size.y)
-		canvas.style.width = "${size.x}px"
-		canvas.style.height = "${size.y}px"
+		canvas.style.also {
+			it.left = "${position.x}px"
+			it.top = "${position.y}px"
+			it.width = "${size.x}px"
+			it.height = "${size.y}px"
+		}
 	}
 	
 	override fun render(display: DisplayObject) {

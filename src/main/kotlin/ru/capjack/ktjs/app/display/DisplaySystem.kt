@@ -7,8 +7,8 @@ interface DisplaySystem {
 	
 	val renderer: DisplayRenderer
 	
-	fun setCanvasSize(width: Int, height: Int)
+	fun setSize(width: Int, height: Int)
 	
-	fun setCanvasSize(size: Axial<Int>)
+	fun setSize(size: Axial<Int>)
 }
 

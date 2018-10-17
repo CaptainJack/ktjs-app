@@ -1,28 +1,19 @@
 package ru.capjack.ktjs.app.assets
 
-internal class AssetsImpl(
-	private val images: Map<String, ImageAssetImpl>,
-	private val sgvs: Map<String, SvgAssetImpl>,
-	private val imageAtlases: Map<String, ImageAtlasAssetImpl>,
-	private val sounds: Map<String, SoundAssetImpl>,
-	private val xmls: Map<String, XmlAssetImpl>,
-	private val videos: Map<String, VideoAssetImpl>,
-	private val jsons: Map<String, JsonAssetImpl>
-) : Assets {
+open class AssetsImpl(private val map: AssetsMap) : Assets {
+	override fun getImageAsset(name: String): ImageAsset = map.get(AssetKind.Image, name)
 	
-	override fun getImageAsset(name: String): ImageAsset = fetchAsset(images, name)
+	override fun getSvgAsset(name: String): SvgAsset = map.get(AssetKind.Svg, name)
 	
-	override fun getSvgAsset(name: String): SvgAsset = fetchAsset(sgvs, name)
+	override fun getAtlasAsset(name: String): ImageAtlasAsset = map.get(AssetKind.ImageAtlas, name)
 	
-	override fun getAtlasAsset(name: String): ImageAtlasAsset = fetchAsset(imageAtlases, name)
+	override fun getSoundAsset(name: String): SoundAsset = map.get(AssetKind.Sound, name)
 	
-	override fun getSoundAsset(name: String): SoundAsset = fetchAsset(sounds, name)
+	override fun getXmlAsset(name: String): XmlAsset = map.get(AssetKind.Xml, name)
 	
-	override fun getXmlAsset(name: String): XmlAsset = fetchAsset(xmls, name)
+	override fun getVideoAsset(name: String): VideoAsset = map.get(AssetKind.Video, name)
 	
-	override fun getVideoAsset(name: String): VideoAsset = fetchAsset(videos, name)
-	
-	override fun getJsonAsset(name: String): JsonAsset = fetchAsset(jsons, name)
+	override fun getJsonAsset(name: String): JsonAsset = map.get(AssetKind.Json, name)
 	
 	override fun getTexture(name: String) = getImageAsset(name).texture
 	
@@ -41,32 +32,6 @@ internal class AssetsImpl(
 	override fun getJson(name: String) = getJsonAsset(name).content
 	
 	override fun destroy() {
-		for (asset in images.values) {
-			asset.destroy()
-		}
-		for (asset in sgvs.values) {
-			asset.destroy()
-		}
-		for (asset in imageAtlases.values) {
-			asset.destroy()
-		}
-		for (asset in sounds.values) {
-			asset.destroy()
-		}
-		for (asset in xmls.values) {
-			asset.destroy()
-		}
-		for (asset in videos.values) {
-			asset.destroy()
-		}
-		for (asset in jsons.values) {
-			asset.destroy()
-		}
-	}
-	
-	private fun <A : Asset> fetchAsset(map: Map<String, A>, name: String): A {
-		val asset = map[name]
-		return asset ?: throw IllegalArgumentException("Asset named \"$name\" is not exist")
+		map.destroy()
 	}
 }
-
