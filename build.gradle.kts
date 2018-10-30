@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
 	implementation(kotlin("stdlib-js"))
-	implementation("ru.capjack.ktjs:ktjs-common:0.8.0-dev.3+bd40b38")
+	implementation("ru.capjack.ktjs:ktjs-common:0.9.0-dev.1+0c9ef24")
 	implementation("ru.capjack.ktjs:ktjs-wrapper-webfontloader:0.1.0")
 	implementation("ru.capjack.ktjs:ktjs-wrapper-howler:0.1.0")
 	implementation("ru.capjack.ktjs:ktjs-wrapper-pixi:0.3.0")

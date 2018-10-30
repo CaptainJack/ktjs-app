@@ -1,8 +1,9 @@
 package ru.capjack.ktjs.app.sound
 
+import ru.capjack.ktjs.common.ChangeableObject
 import ru.capjack.ktjs.common.Delegates.observable
 
-class DefaultSoundSystem : SoundSystem {
+class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 	override var volume: Double by observable(1.0, ::makeVolume)
 	
 	private val flows: MutableSet<SoundFlow> = mutableSetOf()
@@ -25,6 +26,7 @@ class DefaultSoundSystem : SoundSystem {
 	
 	private fun makeVolume(volume: Double) {
 		flows.forEach { it.volume = volume }
+		introduceChange(volume)
 	}
 	
 	private fun addFlow(flow: SoundFlow): SoundFlow {
