@@ -7,6 +7,8 @@ interface DisplaySystem {
 	
 	val renderer: DisplayRenderer
 	
+	val fullsrceen: DisplayFullsrceen
+	
 	fun setSize(width: Int, height: Int)
 	
 	fun setSize(size: Axial<Int>)

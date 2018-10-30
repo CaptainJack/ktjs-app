@@ -16,6 +16,7 @@ class DisplaySystemImpl(
 	
 	override val stage: Stage get() = _stage
 	override val renderer: DisplayRenderer = DisplayRendererImpl(resolutionResolver, color)
+	override val fullsrceen: DisplayFullsrceen = DisplayFullsrceenImpl(this)
 	
 	init {
 		time.onEachFrame { render() }
