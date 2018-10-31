@@ -15,7 +15,7 @@ class HowlerSoundFlow(
 	private val settings: SoundFlowSettings
 ) : EventDispatcherImpl<SoundFlow.Event>(), SoundFlow {
 	
-	override var volume: Double = 1.0
+	override var volume: Double = settings.volume
 		set(value) {
 			if (field != value) {
 				field = value
