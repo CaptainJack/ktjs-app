@@ -1,7 +1,5 @@
 package ru.capjack.ktjs.app.display.button
 
-import ru.capjack.ktjs.app.sound.Sound
-import ru.capjack.ktjs.app.sound.SoundFlow
 import ru.capjack.ktjs.common.Cancelable
 import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
@@ -13,10 +11,6 @@ import ru.capjack.ktjs.wrapper.pixi.DisplayObject
 class ButtonControlImp() : ButtonControl, Destroyable {
 	
 	private var target: DisplayObject? = null
-	
-	private var sound: Sound? = null
-	private var soundFlow: SoundFlow? = null
-	private var volume: Double = 1.0
 	
 	override var state = ButtonState.DISABLED
 	override var enabled by observable(false, ::processChangeEnabled)
@@ -71,10 +65,6 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 		if (enabled) {
 			pressHandlers.invoke()
 		}
-		if (sound != null) {
-			soundFlow = sound?.play()
-			soundFlow?.volume = volume
-		}
 	}
 	
 	override fun onPress(handler: () -> Unit): Cancelable {
@@ -87,12 +77,6 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 	
 	override fun onState(handler: (ButtonState) -> Unit): Cancelable {
 		return stateHandlers.add(handler)
-	}
-	
-	override fun setSound(sound: Sound, volume: Double) {
-		soundFlow?.stop()
-		this.volume = volume
-		this.sound = sound
 	}
 	
 	private fun processChangeEnabled() {

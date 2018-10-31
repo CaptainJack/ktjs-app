@@ -5,7 +5,11 @@ import ru.capjack.ktjs.common.Changeable
 interface SoundSystem : Changeable<Double> {
 	var volume: Double
 	
-	fun play(sound: Sound): SoundFlow
+	val muted: Boolean
+	
+	fun toggleMute()
+	
+	fun play(sound: Sound, volume: Double = 1.0): SoundFlow
 	
 	fun play(sound: Sound, settings: SoundFlowSettings): SoundFlow
 	

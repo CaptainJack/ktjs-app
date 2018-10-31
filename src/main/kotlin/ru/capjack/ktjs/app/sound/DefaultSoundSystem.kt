@@ -4,16 +4,28 @@ import ru.capjack.ktjs.common.ChangeableObject
 import ru.capjack.ktjs.common.Delegates.observable
 
 class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
-	override var volume: Double by observable(1.0, ::makeVolume)
+	override var volume by observable(1.0, ::makeVolume)
+	override val muted get() = volume == 0.0
 	
+	private var beforeMuteVolume = 0.0
 	private val flows: MutableSet<SoundFlow> = mutableSetOf()
 	
-	override fun play(sound: Sound): SoundFlow {
-		return addFlow(sound.play())
+	override fun toggleMute() {
+		if (muted) {
+			volume = beforeMuteVolume
+		}
+		else {
+			beforeMuteVolume = volume
+			volume = 0.0
+		}
+	}
+	
+	override fun play(sound: Sound, volume: Double): SoundFlow {
+		return addFlow(sound.play(this, volume))
 	}
 	
 	override fun play(sound: Sound, settings: SoundFlowSettings): SoundFlow {
-		return addFlow(sound.play(settings))
+		return addFlow(sound.play(this, settings))
 	}
 	
 	override fun play(sound: Sound, settings: SoundFlowSettings.() -> Unit): SoundFlow {
