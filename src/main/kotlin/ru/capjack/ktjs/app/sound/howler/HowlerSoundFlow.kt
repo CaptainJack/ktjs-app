@@ -28,10 +28,11 @@ class HowlerSoundFlow(
 	
 	private val id = source.play() ?: throw IllegalStateException("Can't play sound")
 	private var completed: Boolean = false
-	
 	private var endTask: Cancelable? = null
+	private val systemHandler: Cancelable
 	
 	init {
+		systemHandler = system.onChange(::applyVolume)
 		applyVolume()
 		waitEnd()
 		
@@ -85,6 +86,7 @@ class HowlerSoundFlow(
 	
 	private fun complete() {
 		completed = true
+		systemHandler.cancel()
 		introduceEvent(SoundFlow.Event.Complete(this))
 		clearEventReceivers()
 	}
