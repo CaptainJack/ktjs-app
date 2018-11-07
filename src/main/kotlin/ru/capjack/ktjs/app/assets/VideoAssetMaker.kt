@@ -31,7 +31,7 @@ internal class VideoAssetMaker(url: Url) : AbstractAssetMaker<VideoAssetImpl>(Vi
 		asset.load(video)
 		complete()
 	}
-
+	
 	@Suppress("UNUSED_PARAMETER")
 	private fun processOnError(message: dynamic, source: String, line: Int, col: Int, error: Any?) {
 		releaseVideo()
@@ -39,7 +39,7 @@ internal class VideoAssetMaker(url: Url) : AbstractAssetMaker<VideoAssetImpl>(Vi
 	}
 	
 	private fun releaseVideo() {
-		video.onload = null
+		video.oncanplaythrough = null
 		video.onerror = null
 	}
 }
