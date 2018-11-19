@@ -48,10 +48,10 @@ class Stack(
 			space[oppositeAxis] = nodes.map { it.size[oppositeAxis] }.max() ?: 0
 		}
 		else {
-			space[oppositeAxis] = size[oppositeAxis]
+			space[oppositeAxis] = innerSize[oppositeAxis]
 		}
 		
-		space[axis] = size[axis]
+		space[axis] = innerSize[axis]
 		
 		val nodesForOutsideSize = mutableListOf<Node>()
 		
@@ -64,7 +64,7 @@ class Stack(
 			}
 		}
 		
-		space[axis] = space[axis].coerceAtLeast(0)
+		space[axis] = (space[axis] - (nodes.size - 1).coerceAtLeast(0) * gap).coerceAtLeast(0)
 		
 		if (nodesForOutsideSize.isNotEmpty()) {
 			val oneOutsideSize = space[axis] / nodesForOutsideSize.size
