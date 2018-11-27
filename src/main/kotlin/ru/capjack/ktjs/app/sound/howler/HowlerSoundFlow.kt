@@ -79,9 +79,10 @@ class HowlerSoundFlow(
 				seek(settings.restart)
 			}
 		}
-		
-		stop()
-		complete()
+		else {
+			stop()
+			complete()
+		}
 	}
 	
 	private fun complete() {
