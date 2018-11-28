@@ -6,10 +6,10 @@ import ru.capjack.ktjs.common.geom.Axial
 import ru.capjack.ktjs.common.js.jso
 import ru.capjack.ktjs.common.replaceIf
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
+import ru.capjack.ktjs.wrapper.pixi.PixiUtils.skipHello
 import ru.capjack.ktjs.wrapper.pixi.RenderTexture
 import ru.capjack.ktjs.wrapper.pixi.SystemRenderer
 import ru.capjack.ktjs.wrapper.pixi.autoDetectRenderer
-import ru.capjack.ktjs.wrapper.pixi.utils.skipHello
 import kotlin.browser.document
 import kotlin.browser.window
 
