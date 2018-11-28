@@ -12,6 +12,9 @@ class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 	
 	override fun toggleMute() {
 		if (muted) {
+			if (beforeMuteVolume == 0.0) {
+				beforeMuteVolume = 1.0
+			}
 			volume = beforeMuteVolume
 		}
 		else {
