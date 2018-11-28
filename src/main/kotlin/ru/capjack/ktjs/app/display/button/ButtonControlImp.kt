@@ -6,6 +6,7 @@ import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.common.ProcedureGroup
 import ru.capjack.ktjs.wrapper.pixi.Container
 import ru.capjack.ktjs.wrapper.pixi.DisplayObject
+import ru.capjack.ktjs.wrapper.pixi.interaction.InteractionEventType
 
 
 class ButtonControlImp() : ButtonControl, Destroyable {
@@ -19,7 +20,7 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 	private val refOnPointerOut = ::onPointerOut
 	private val refOnPointerDown = ::onPointerDown
 	private val refOnPointerUp = ::onPointerUp
-	private val refOnPointerUpOutside = ::handlePointerUpOutside
+	private val refOnPointerUpOutside = ::onPointerUpOutside
 	
 	private val pressHandlers = ProcedureGroup()
 	private val stateHandlers = ProcedureGroup()
@@ -38,8 +39,8 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 			disable()
 			
 			target?.apply {
-				off("pointerover", refOnPointerOver)
-				off("pointerout", refOnPointerOut)
+				off(InteractionEventType.POINTER_OVER, refOnPointerOver)
+				off(InteractionEventType.POINTER_OUT, refOnPointerOut)
 			}
 			
 			target = value
@@ -47,8 +48,8 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 			target?.apply {
 				if (this is Container) interactiveChildren = true
 				
-				on("pointerover", refOnPointerOver)
-				on("pointerout", refOnPointerOut)
+				on(InteractionEventType.POINTER_OVER, refOnPointerOver)
+				on(InteractionEventType.POINTER_OUT, refOnPointerOut)
 			}
 			
 			enabled = e
@@ -85,9 +86,9 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 		if (enabled) {
 			target?.apply {
 				cursor = "pointer"
-				on("pointerdown", refOnPointerDown)
-				on("pointerup", refOnPointerUp)
-				on("pointerupoutside", refOnPointerUpOutside)
+				on(InteractionEventType.POINTER_DOWN, refOnPointerDown)
+				on(InteractionEventType.POINTER_UP, refOnPointerUp)
+				on(InteractionEventType.POINTER_UP_OUTSIDE, refOnPointerUpOutside)
 			}
 			
 			setState(if (pointerFocus) ButtonState.FOCUS else ButtonState.IDLE)
@@ -95,9 +96,9 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 		else {
 			target?.apply {
 				cursor = "default"
-				off("pointerdown", refOnPointerDown)
-				off("pointerup", refOnPointerUp)
-				off("pointerupoutside", refOnPointerUpOutside)
+				off(InteractionEventType.POINTER_DOWN, refOnPointerDown)
+				off(InteractionEventType.POINTER_UP, refOnPointerUp)
+				off(InteractionEventType.POINTER_UP_OUTSIDE, refOnPointerUpOutside)
 			}
 			
 			pointerActive = false
@@ -122,7 +123,6 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 	private fun onPointerDown() {
 		if (enabled) {
 			pointerActive = true
-			pointerFocus = true
 			setState(ButtonState.ACTIVE)
 		}
 	}
@@ -132,16 +132,15 @@ class ButtonControlImp() : ButtonControl, Destroyable {
 			setState(if (pointerFocus) ButtonState.FOCUS else ButtonState.IDLE)
 			if (pointerActive) {
 				pointerActive = false
-				if (pointerFocus) {
-					press()
-				}
+				press()
 			}
 		}
 	}
 	
-	private fun handlePointerUpOutside() {
+	private fun onPointerUpOutside() {
 		pointerFocus = false
 		if (enabled) {
+			pointerActive = false
 			onPointerUp()
 		}
 	}
