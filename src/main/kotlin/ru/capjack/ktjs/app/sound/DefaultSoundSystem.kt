@@ -28,10 +28,6 @@ class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 		return addFlow(sound.play(this, settings))
 	}
 	
-	override fun play(sound: Sound, settings: SoundFlowSettings.() -> Unit): SoundFlow {
-		return play(sound, SoundFlowSettings().apply(settings))
-	}
-	
 	private fun addFlow(flow: SoundFlow): SoundFlow {
 		flows.add(flow)
 		flow.onComplete(::removeFlow)
