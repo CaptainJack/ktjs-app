@@ -3,9 +3,9 @@ package ru.capjack.ktjs.app.sound
 import ru.capjack.ktjs.common.Changeable
 
 interface SoundSystem : Changeable<Double> {
-	var volume: Double
-	
 	val muted: Boolean
+	
+	var volume: Double
 	
 	fun toggleMute()
 	

@@ -4,8 +4,10 @@ import ru.capjack.ktjs.app.sound.SoundFlow
 import ru.capjack.ktjs.app.sound.SoundFlowSettings
 import ru.capjack.ktjs.app.sound.SoundSystem
 import ru.capjack.ktjs.common.Cancelable
-import ru.capjack.ktjs.common.events.EventDispatcherImpl
+import ru.capjack.ktjs.common.ProcedureGroup
+import ru.capjack.ktjs.common.invokeDelayed
 import ru.capjack.ktjs.common.time.GlobalTimeSystem
+import ru.capjack.ktjs.common.time.schedule
 import ru.capjack.ktjs.wrapper.howler.Events
 import ru.capjack.ktjs.wrapper.howler.Howl
 
@@ -13,7 +15,14 @@ class HowlerSoundFlow(
 	private val system: SoundSystem,
 	private val source: Howl,
 	private val settings: SoundFlowSettings
-) : EventDispatcherImpl<SoundFlow.Event>(), SoundFlow {
+) : SoundFlow {
+	
+	private val id: Int
+	private var completed: Boolean = false
+	private var endTask: Cancelable? = null
+	private var refHandleEnd = ::handleEnd
+	private val systemHandler: Cancelable
+	private val completeHandlers = ProcedureGroup()
 	
 	override var volume: Double = settings.volume
 		set(value) {
@@ -26,15 +35,18 @@ class HowlerSoundFlow(
 	private val absoluteVolume
 		get() = system.volume * volume
 	
-	private val id = source.play() ?: throw IllegalStateException("Can't play sound")
-	private var completed: Boolean = false
-	private var endTask: Cancelable? = null
-	private val systemHandler: Cancelable
-	
 	init {
+		id = source.play() ?: throw IllegalStateException("Can't play sound")
 		systemHandler = system.onChange(::applyVolume)
+		
 		applyVolume()
-		waitEnd()
+		
+		if (settings.end > 0.0) {
+			waitEnd(settings.start)
+		}
+		else {
+			source.on(Events.END, refHandleEnd, id)
+		}
 		
 		if (settings.start != 0.0) {
 			seek(settings.start)
@@ -49,21 +61,13 @@ class HowlerSoundFlow(
 		this.volume = volume
 	}
 	
-	private fun applyVolume() {
-		source.volume(absoluteVolume, id)
-	}
-	
-	private fun waitEnd() {
-		if (settings.end > 0.0) {
-			endTask = GlobalTimeSystem.schedule((settings.end - settings.start).toInt()) { handleEnd() }
+	override fun onComplete(handler: (SoundFlow) -> Unit) {
+		if (completed) {
+			invokeDelayed { handler(this) }
 		}
 		else {
-			source.once(Events.END, ::handleEnd, id)
+			completeHandlers.add(handler)
 		}
-	}
-	
-	private fun seek(milliseconds: Double) {
-		source.seek(milliseconds / 1000, id)
 	}
 	
 	override fun stop() {
@@ -71,24 +75,42 @@ class HowlerSoundFlow(
 		complete()
 	}
 	
-	private fun handleEnd() {
+	private fun applyVolume() {
+		source.volume(absoluteVolume, id)
+	}
+	
+	private fun waitEnd(offset: Double) {
 		endTask?.cancel()
 		
+		endTask = GlobalTimeSystem.schedule(
+			(settings.end - offset).toInt(),
+			::handleEnd
+		)
+	}
+	
+	private fun seek(milliseconds: Double) {
+		source.seek(milliseconds / 1000, id)
+	}
+	
+	private fun handleEnd() {
 		if (settings.loop) {
+			waitEnd(settings.restart)
 			if (settings.restart != 0.0) {
 				seek(settings.restart)
 			}
 		}
 		else {
 			stop()
-			complete()
 		}
 	}
 	
 	private fun complete() {
-		completed = true
-		systemHandler.cancel()
-		introduceEvent(SoundFlow.Event.Complete(this))
-		clearEventReceivers()
+		if (!completed) {
+			completed = true
+			source.off(Events.END, refHandleEnd, id)
+			endTask?.cancel()
+			systemHandler.cancel()
+			completeHandlers.clearAndInvoke(this)
+		}
 	}
 }

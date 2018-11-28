@@ -33,16 +33,12 @@ class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 	}
 	
 	private fun addFlow(flow: SoundFlow): SoundFlow {
-		flow.onEvent(SoundFlow.Event.Complete::class, ::handleFlowComplete)
 		flows.add(flow)
+		flow.onComplete(::removeFlow)
 		return flow
 	}
 	
 	private fun removeFlow(flow: SoundFlow) {
 		flows.remove(flow)
-	}
-	
-	private fun handleFlowComplete(event: SoundFlow.Event) {
-		removeFlow(event.flow)
 	}
 }
