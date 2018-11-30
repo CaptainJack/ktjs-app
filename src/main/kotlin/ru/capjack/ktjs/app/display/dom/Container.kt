@@ -20,9 +20,9 @@ open class Container : Node(), NodeList {
 		nodes.forEach(Node::destroy)
 	}
 	
-	override fun destroy() {
+	override fun doDestroy() {
 		destroyAllNodes()
-		super.destroy()
+		super.doDestroy()
 	}
 	
 	override fun getNode(index: Int): Node {

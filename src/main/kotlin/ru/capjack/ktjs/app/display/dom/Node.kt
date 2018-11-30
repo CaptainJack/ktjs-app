@@ -13,6 +13,7 @@ import ru.capjack.ktjs.common.Cancelable
 import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.Delegates.observable
 import ru.capjack.ktjs.common.Destroyable
+import ru.capjack.ktjs.common.ProcedureGroup
 import ru.capjack.ktjs.common.geom.*
 import ru.capjack.ktjs.wrapper.pixi.Filter
 import ru.capjack.ktjs.wrapper.pixi.Graphics
@@ -123,7 +124,24 @@ abstract class Node : Destroyable {
 		rule.apply(coordinate, position, space, size, axis)
 	}
 	
+	var destroyed = false
+		private set
+	
+	private val destroyHandlers = ProcedureGroup()
+	
+	fun onDestroy(handler: () -> Unit) {
+		destroyHandlers.add(handler)
+	}
+	
 	override fun destroy() {
+		if (!destroyed) {
+			doDestroy()
+			destroyHandlers.clearAndInvoke()
+		}
+	}
+	
+	protected open fun doDestroy() {
+		destroyed = true
 		container = null
 		_position.destroy()
 		_size.destroy()

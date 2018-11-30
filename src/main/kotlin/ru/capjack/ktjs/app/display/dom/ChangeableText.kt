@@ -17,8 +17,8 @@ class ChangeableText<V>(
 		value = formatter.invoke(v)
 	}
 	
-	override fun destroy() {
+	override fun doDestroy() {
 		updater.cancel()
-		super.destroy()
+		super.doDestroy()
 	}
 }
