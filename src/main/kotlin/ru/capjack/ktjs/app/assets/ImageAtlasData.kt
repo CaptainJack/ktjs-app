@@ -19,11 +19,12 @@ internal class ImageAtlasData(
 	
 	companion object {
 		fun parseJson(data: dynamic): ImageAtlasData {
-			return if (data is Array<dynamic> && data.length == 2 && data[0] is String) {
+			val a = data is Array<dynamic>
+			return if (a && data.length == 2 && data[0] is String) {
 				parseJsonCjKtjs(data)
 			}
 			else {
-				throw IllegalArgumentException()
+				throw IllegalArgumentException("Parse json ($a:${data.length}) from " + data)
 			}
 		}
 		
