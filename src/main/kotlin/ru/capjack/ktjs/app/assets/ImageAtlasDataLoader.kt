@@ -6,6 +6,7 @@ import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
+import ru.capjack.ktjs.common.js.convertErrorEventToString
 import ru.capjack.ktjs.common.rl.Url
 
 internal class ImageAtlasDataLoader(
@@ -56,7 +57,7 @@ internal class ImageAtlasDataLoader(
 	private fun processOnError(event: Event) {
 		releaseRequest()
 		
-		throw RuntimeException(event.toString())
+		throw RuntimeException(convertErrorEventToString(event))
 	}
 	
 	private fun releaseRequest() {
