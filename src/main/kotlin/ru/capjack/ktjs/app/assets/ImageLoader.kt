@@ -120,7 +120,7 @@ class ImageLoader(
 	@Suppress("UNUSED_PARAMETER")
 	private fun processOnError(message: dynamic, source: String, line: Int, col: Int, error: Any?) {
 		releaseImage()
-		throw RuntimeException("Failed to load image \"$url\" ($message)")
+		throw FileLoadFailException(url, message)
 	}
 	
 	private fun releaseImage() {
@@ -132,3 +132,4 @@ class ImageLoader(
 		val customRenderers = mutableMapOf<Int, SystemRenderer>()
 	}
 }
+

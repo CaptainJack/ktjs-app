@@ -6,11 +6,10 @@ import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
-import ru.capjack.ktjs.common.js.convertErrorEventToString
 import ru.capjack.ktjs.common.rl.Url
 
 internal class ImageAtlasDataLoader(
-	url: Url,
+	private val url: Url,
 	private val receiver: (ImageAtlasData) -> Unit
 ) {
 	
@@ -18,15 +17,16 @@ internal class ImageAtlasDataLoader(
 	private val sourceType = defineSourceType(url)
 	
 	init {
-		request.responseType = when (sourceType) {
-			ImageAtlasData.SourceType.JSON -> XMLHttpRequestResponseType.JSON
-			ImageAtlasData.SourceType.XML  -> XMLHttpRequestResponseType.DOCUMENT
+		request.apply {
+			responseType = when (sourceType) {
+				ImageAtlasData.SourceType.JSON -> XMLHttpRequestResponseType.JSON
+				ImageAtlasData.SourceType.XML  -> XMLHttpRequestResponseType.DOCUMENT
+			}
+			onload = ::processOnLoad
+			onerror = ::processOnError
+			open("GET", url.value, true)
+			send()
 		}
-		
-		request.onload = ::processOnLoad
-		request.onerror = ::processOnError
-		request.open("GET", url.value, true)
-		request.send()
 	}
 	
 	private fun defineSourceType(url: Url): ImageAtlasData.SourceType {
@@ -40,9 +40,9 @@ internal class ImageAtlasDataLoader(
 	}
 	
 	private fun processOnLoad(event: Event) {
-		releaseRequest()
-		
 		if (request.readyState == XMLHttpRequest.DONE && request.status == 200.toShort()) {
+			releaseRequest()
+			
 			val data = when (sourceType) {
 				ImageAtlasData.SourceType.JSON -> ImageAtlasData.parseJson(request.response)
 				ImageAtlasData.SourceType.XML  -> ImageAtlasData.parseXml(request.response as XMLDocument)
@@ -50,14 +50,13 @@ internal class ImageAtlasDataLoader(
 			receiver.invoke(data)
 		}
 		else {
-			throw RuntimeException("Failed to load ImageAtlas file using XHR ($event)")
+			processOnError(event)
 		}
 	}
 	
 	private fun processOnError(event: Event) {
 		releaseRequest()
-		
-		throw RuntimeException(convertErrorEventToString(event))
+		throw FileLoadFailException(url, event)
 	}
 	
 	private fun releaseRequest() {

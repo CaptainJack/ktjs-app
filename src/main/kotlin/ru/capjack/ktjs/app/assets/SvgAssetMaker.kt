@@ -27,7 +27,7 @@ internal class SvgAssetMaker(
 	@Suppress("UNUSED_PARAMETER")
 	private fun processOnError(message: dynamic, source: String, line: Int, col: Int, error: Any?) {
 		releaseImage()
-		throw RuntimeException("Failed to load svg \"$url\" ($message)")
+		throw FileLoadFailException(url, message)
 	}
 	
 	private fun releaseImage() {
