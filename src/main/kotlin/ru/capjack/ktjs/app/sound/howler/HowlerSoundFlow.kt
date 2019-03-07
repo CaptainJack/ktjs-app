@@ -71,7 +71,8 @@ class HowlerSoundFlow(
 	}
 	
 	override fun stop() {
-		source.stop(id)
+		console.log("source $source should be stop")
+		source.stop()
 		complete()
 	}
 	
