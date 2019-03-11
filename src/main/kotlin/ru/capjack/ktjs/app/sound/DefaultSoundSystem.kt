@@ -40,7 +40,6 @@ class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 	private fun removeFlow(flow: SoundFlow) {
 		flow.stop()
 		flows.remove(flow)
-		console.log("flow should be removed")
 	}
 	
 	override fun stop(flow: SoundFlow) {
