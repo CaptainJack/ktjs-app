@@ -12,4 +12,6 @@ interface SoundSystem : Changeable<Double> {
 	fun play(sound: Sound, volume: Double = 1.0): SoundFlow
 	
 	fun play(sound: Sound, settings: SoundFlowSettings): SoundFlow
+	
+	fun stop(flow:SoundFlow)
 }

@@ -38,6 +38,11 @@ class DefaultSoundSystem : SoundSystem, ChangeableObject<Double>() {
 	}
 	
 	private fun removeFlow(flow: SoundFlow) {
+		flow.stop()
 		flows.remove(flow)
+	}
+	
+	override fun stop(flow: SoundFlow) {
+		removeFlow(flow)
 	}
 }
