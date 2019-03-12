@@ -5,6 +5,7 @@ import ru.capjack.ktjs.app.display.dom.traits.PositionRules
 import ru.capjack.ktjs.app.display.dom.traits.SpaceType
 import ru.capjack.ktjs.common.geom.Axis
 import ru.capjack.ktjs.common.geom.mutableAxial
+import ru.capjack.ktjs.common.invokeDelayed
 
 class Stack(
 	private val axis: Axis,
@@ -14,8 +15,10 @@ class Stack(
 	
 	private var skipPlace: Boolean = false
 	
+	
 	init {
-		size.onChange(::placeNodes)
+		size.onChange(::tryPlaceNodes)
+		contentSize.onChange(::tryPlaceNodes)
 	}
 	
 	override fun isAllowsChildrenSizeOutside(axis: Axis): Boolean {
@@ -33,10 +36,20 @@ class Stack(
 		skipPlace = false
 	}
 	
+	private var hasTryPlaceNodes: Boolean = false
+	
+	private fun tryPlaceNodes() {
+		if (!hasTryPlaceNodes) {
+			hasTryPlaceNodes = true
+			invokeDelayed(::placeNodes)
+		}
+	}
+	
 	private fun placeNodes() {
 		if (skipPlace) {
 			return
 		}
+		hasTryPlaceNodes = false
 		
 		var offset = 0
 		
