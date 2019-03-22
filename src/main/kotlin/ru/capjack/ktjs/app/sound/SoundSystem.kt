@@ -14,4 +14,6 @@ interface SoundSystem : Changeable<Double> {
 	fun play(sound: Sound, settings: SoundFlowSettings): SoundFlow
 	
 	fun stop(flow:SoundFlow)
+	
+	fun stopAllSounds()
 }
