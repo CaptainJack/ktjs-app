@@ -6,5 +6,7 @@ interface Sound {
 	fun play(system: SoundSystem, settings: SoundFlowSettings): SoundFlow
 	
 	fun getDuration(): Double
+	
+	fun getDurationMilliseconds() : Int
 }
 

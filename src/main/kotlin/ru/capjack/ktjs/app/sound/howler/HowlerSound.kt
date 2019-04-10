@@ -8,6 +8,10 @@ import ru.capjack.ktjs.common.Destroyable
 import ru.capjack.ktjs.wrapper.howler.Howl
 
 class HowlerSound(private val source: Howl) : Sound, Destroyable {
+	override fun getDurationMilliseconds(): Int {
+		return (source.duration() * 1000).toInt()
+	}
+	
 	override fun play(system: SoundSystem, volume: Double): SoundFlow {
 		return HowlerSoundFlow(system, source, volume)
 	}
