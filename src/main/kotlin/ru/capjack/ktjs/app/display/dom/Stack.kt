@@ -17,8 +17,8 @@ class Stack(
 	
 	
 	init {
-		size.onChange(::tryPlaceNodes)
-		contentSize.onChange(::tryPlaceNodes)
+		size.onChange(::delayedPlaceNodes)
+		contentSize.onChange(::delayedPlaceNodes)
 	}
 	
 	override fun isAllowsChildrenSizeOutside(axis: Axis): Boolean {
@@ -36,20 +36,14 @@ class Stack(
 		skipPlace = false
 	}
 	
-	private var hasTryPlaceNodes: Boolean = false
-	
-	private fun tryPlaceNodes() {
-		if (!hasTryPlaceNodes) {
-			hasTryPlaceNodes = true
-			invokeDelayed(::placeNodes)
-		}
+	private fun delayedPlaceNodes() {
+		invokeDelayed(::placeNodes)
 	}
 	
 	private fun placeNodes() {
 		if (skipPlace) {
 			return
 		}
-		hasTryPlaceNodes = false
 		
 		var offset = 0
 		
