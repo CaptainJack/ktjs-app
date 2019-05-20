@@ -4,6 +4,7 @@ import ru.capjack.ktjs.app.sound.SoundFlow
 import ru.capjack.ktjs.app.sound.SoundFlowSettings
 import ru.capjack.ktjs.app.sound.SoundSystem
 import ru.capjack.ktjs.common.Cancelable
+import ru.capjack.ktjs.common.CancelableDummy
 import ru.capjack.ktjs.common.ProcedureGroup
 import ru.capjack.ktjs.common.invokeDelayed
 import ru.capjack.ktjs.common.time.GlobalTimeSystem
@@ -36,24 +37,34 @@ class HowlerSoundFlow(
 		get() = system.volume * volume
 	
 	init {
-		id = source.play() ?: throw IllegalStateException("Can't play sound")
-		systemHandler = system.onChange(::applyVolume)
-		
-		applyVolume()
-		
-		if (settings.end > 0.0) {
-			waitEnd(settings.start)
+		val p = source.play()
+
+		if (p == null) {
+			completed = true
+			id = 0
+			systemHandler = CancelableDummy
 		}
 		else {
-			source.on(Events.END, refHandleEnd, id)
-		}
-		
-		if (settings.start != 0.0) {
-			seek(settings.start)
-		}
-		
-		if (settings.loop) {
-			source.loop(true, id)
+			
+			id = p
+			systemHandler = system.onChange(::applyVolume)
+			
+			applyVolume()
+			
+			if (settings.end > 0.0) {
+				waitEnd(settings.start)
+			}
+			else {
+				source.on(Events.END, refHandleEnd, id)
+			}
+			
+			if (settings.start != 0.0) {
+				seek(settings.start)
+			}
+			
+			if (settings.loop) {
+				source.loop(true, id)
+			}
 		}
 	}
 	
